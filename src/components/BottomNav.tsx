@@ -8,19 +8,17 @@ interface BottomNavProps {
 
 const tabs: { view: View; icon: string; label: string }[] = [
   { view: 'dashboard', icon: '🏠', label: 'Koti' },
-  { view: 'dashboard', icon: '🏘️', label: 'Asunnot' },
-  { view: 'valitys', icon: '📢', label: 'Välitys' },
+  { view: 'properties', icon: '🏘️', label: 'Asunnot' },
   { view: 'messages', icon: '💬', label: 'Viestit' },
-  { view: 'more', icon: '⚙️', label: 'Lisää' },
+  { view: 'profile', icon: '👤', label: 'Profiili' },
 ];
 
 export function BottomNav({ currentView, onNavigate }: BottomNavProps) {
   const getActiveIndex = () => {
     if (currentView === 'dashboard') return 0;
-    if (['property', 'letter'].includes(currentView)) return 1;
-    if (currentView === 'valitys') return 2;
-    if (currentView === 'messages') return 3;
-    if (['more', 'services', 'management', 'alerts', 'leases', 'expenses', 'tax'].includes(currentView)) return 4;
+    if (['properties', 'property', 'letter'].includes(currentView)) return 1;
+    if (currentView === 'messages') return 2;
+    if (currentView === 'profile') return 3;
     return 0;
   };
 
@@ -34,15 +32,9 @@ export function BottomNav({ currentView, onNavigate }: BottomNavProps) {
             const isActive = activeIndex === index;
             return (
               <button
-                key={`${tab.label}-${index}`}
-                onClick={() => {
-                  if (index === 1) {
-                    onNavigate('dashboard');
-                  } else {
-                    onNavigate(tab.view);
-                  }
-                }}
-                className="relative flex flex-col items-center gap-0.5 px-3 py-2 rounded-xl transition-all duration-300 min-w-0 flex-1"
+                key={tab.label}
+                onClick={() => onNavigate(tab.view)}
+                className="relative flex flex-col items-center gap-0.5 px-4 py-2 rounded-xl transition-all duration-300 min-w-0 flex-1"
               >
                 {isActive && (
                   <motion.div

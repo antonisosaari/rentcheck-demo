@@ -4,7 +4,7 @@ import {
   Camera, Check, ChevronRight, Star, Calendar,
   Users, FileText, Send, X, Sparkles,
 } from 'lucide-react';
-import { properties } from '../data/mockData';
+import type { Property } from '../data/mockData';
 
 const container = {
   hidden: { opacity: 0 },
@@ -29,20 +29,19 @@ const pipelineSteps = [
   { key: 'sopimus', label: 'Sopimus', icon: '📋' },
 ];
 
-export function Valitys() {
+interface PropertyValitysProps {
+  property: Property;
+}
+
+/** Embeddable välitys view for a single property — used inside PropertyDetail */
+export function PropertyValitys({ property }: PropertyValitysProps) {
   const [activeTab, setActiveTab] = useState<ValitysTab>('ilmoitus');
   const [showOutsource, setShowOutsource] = useState(false);
 
   const activeStepIndex = pipelineSteps.findIndex(s => s.key === activeTab);
 
   return (
-    <motion.div variants={container} initial="hidden" animate="show" exit={{ opacity: 0, y: -10 }}>
-      {/* Header */}
-      <motion.div variants={item} className="mb-5">
-        <h1 className="text-xl font-bold text-slate-100">Välitys</h1>
-        <p className="text-xs text-slate-500 mt-1">Vuokrailmoitus ja vuokralaisen haku</p>
-      </motion.div>
-
+    <motion.div variants={container} initial="hidden" animate="show">
       {/* Outsource Banner */}
       <motion.div variants={item} className="mb-4">
         <button
@@ -72,105 +71,80 @@ export function Valitys() {
               <span className="text-sm font-bold text-green-400">1kk vuokra</span>
               <span className="text-[10px] text-slate-500">(sis. ALV)</span>
             </div>
-            <div className="space-y-2 mb-4">
-              <div className="glass rounded-xl p-3 flex items-center gap-3 border border-white/5">
-                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-500/20 to-blue-600/10 border border-blue-500/20 flex items-center justify-center shrink-0">
-                  <span className="text-sm">🏢</span>
-                </div>
-                <div className="flex-1">
-                  <p className="text-xs font-semibold text-slate-200">Luottovälitys Oy</p>
-                  <div className="flex items-center gap-1">
-                    <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
-                    <span className="text-[10px] text-amber-400">4.8</span>
+            <div className="space-y-2">
+              {[
+                { name: 'Luottovälitys Oy', rating: '4.8', color: 'blue', icon: '🏢' },
+                { name: 'Vuokraturva', rating: '4.6', color: 'purple', icon: '🏠' },
+              ].map(partner => (
+                <div key={partner.name} className="glass rounded-xl p-3 flex items-center gap-3 border border-white/5">
+                  <div className={`w-9 h-9 rounded-lg bg-gradient-to-br from-${partner.color}-500/20 to-${partner.color}-600/10 border border-${partner.color}-500/20 flex items-center justify-center shrink-0`}>
+                    <span className="text-sm">{partner.icon}</span>
                   </div>
-                </div>
-                <button className="px-3 py-1.5 rounded-lg text-[10px] font-semibold text-black bg-green-500 hover:bg-green-400 transition-all">
-                  Tilaa
-                </button>
-              </div>
-              <div className="glass rounded-xl p-3 flex items-center gap-3 border border-white/5">
-                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-purple-500/20 to-purple-600/10 border border-purple-500/20 flex items-center justify-center shrink-0">
-                  <span className="text-sm">🏠</span>
-                </div>
-                <div className="flex-1">
-                  <p className="text-xs font-semibold text-slate-200">Vuokraturva</p>
-                  <div className="flex items-center gap-1">
-                    <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
-                    <span className="text-[10px] text-amber-400">4.6</span>
+                  <div className="flex-1">
+                    <p className="text-xs font-semibold text-slate-200">{partner.name}</p>
+                    <div className="flex items-center gap-1">
+                      <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
+                      <span className="text-[10px] text-amber-400">{partner.rating}</span>
+                    </div>
                   </div>
+                  <button className="px-3 py-1.5 rounded-lg text-[10px] font-semibold text-black bg-green-500 hover:bg-green-400 transition-all">
+                    Tilaa
+                  </button>
                 </div>
-                <button className="px-3 py-1.5 rounded-lg text-[10px] font-semibold text-black bg-green-500 hover:bg-green-400 transition-all">
-                  Tilaa
-                </button>
-              </div>
+              ))}
             </div>
           </motion.div>
         )}
       </motion.div>
 
       {/* Pipeline Visualization */}
-      <motion.div variants={item} className="glass rounded-2xl p-4 mb-5 shadow-lg shadow-black/20">
+      <motion.div variants={item} className="glass rounded-2xl p-4 mb-4 shadow-lg shadow-black/20">
         <p className="text-[10px] uppercase tracking-wider text-slate-500 mb-3 font-medium">Vuokrausprosessi</p>
         <div className="flex items-center justify-between relative">
-          {/* Connecting line */}
           <div className="absolute top-3 left-5 right-5 h-0.5 bg-white/5" />
           <div
             className="absolute top-3 left-5 h-0.5 bg-green-500/50 transition-all duration-500"
             style={{ width: `${Math.max(0, activeStepIndex) * 25}%` }}
           />
-
           {pipelineSteps.map((step, i) => {
             const isActive = step.key === activeTab;
             const isCompleted = i < activeStepIndex;
             const isFuture = i > activeStepIndex;
-
             return (
               <button
                 key={step.key}
-                onClick={() => {
-                  if (step.key !== 'sopimus') setActiveTab(step.key as ValitysTab);
-                }}
+                onClick={() => { if (step.key !== 'sopimus') setActiveTab(step.key as ValitysTab); }}
                 className="flex flex-col items-center gap-1.5 relative z-10"
               >
-                <div
-                  className={`w-6 h-6 rounded-full flex items-center justify-center text-xs transition-all duration-300 ${
-                    isActive
-                      ? 'bg-green-500 text-black shadow-lg shadow-green-500/30'
-                      : isCompleted
-                        ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                        : 'bg-white/5 text-slate-600 border border-white/10'
-                  }`}
-                >
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs transition-all duration-300 ${
+                  isActive ? 'bg-green-500 text-black shadow-lg shadow-green-500/30' :
+                  isCompleted ? 'bg-green-500/20 text-green-400 border border-green-500/30' :
+                  'bg-white/5 text-slate-600 border border-white/10'
+                }`}>
                   {isCompleted ? <Check className="w-3 h-3" /> : <span className="text-[10px]">{step.icon}</span>}
                 </div>
-                <span
-                  className={`text-[8px] font-medium transition-colors duration-300 ${
-                    isActive ? 'text-green-400' : isFuture ? 'text-slate-600' : 'text-slate-400'
-                  }`}
-                >
-                  {step.label}
-                </span>
+                <span className={`text-[8px] font-medium transition-colors duration-300 ${
+                  isActive ? 'text-green-400' : isFuture ? 'text-slate-600' : 'text-slate-400'
+                }`}>{step.label}</span>
               </button>
             );
           })}
         </div>
       </motion.div>
 
-      {/* Tab Selector */}
-      <motion.div variants={item} className="glass rounded-2xl p-1 flex gap-1 mb-5 shadow-lg shadow-black/20">
+      {/* Sub-Tab Selector */}
+      <motion.div variants={item} className="glass rounded-2xl p-1 flex gap-1 mb-4 shadow-lg shadow-black/20">
         {([
           { key: 'ilmoitus', label: 'Ilmoitus', icon: '📢' },
           { key: 'hakijat', label: 'Hakijat', icon: '👥' },
           { key: 'naytot', label: 'Näytöt', icon: '📅' },
           { key: 'valinta', label: 'Valinta', icon: '📋' },
-        ] as const).map((tab) => (
+        ] as const).map(tab => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
             className={`flex-1 flex items-center justify-center gap-1 px-2 py-2.5 rounded-xl text-[10px] font-medium transition-all duration-300 ${
-              activeTab === tab.key
-                ? 'bg-green-400/15 text-green-400'
-                : 'text-slate-500 hover:text-slate-300'
+              activeTab === tab.key ? 'bg-green-400/15 text-green-400' : 'text-slate-500 hover:text-slate-300'
             }`}
           >
             <span>{tab.icon}</span>
@@ -180,9 +154,9 @@ export function Valitys() {
       </motion.div>
 
       {/* Tab Content */}
-      {activeTab === 'ilmoitus' && <IlmoitusTab />}
+      {activeTab === 'ilmoitus' && <IlmoitusTab property={property} />}
       {activeTab === 'hakijat' && <HakijatTab />}
-      {activeTab === 'naytot' && <NaytotTab />}
+      {activeTab === 'naytot' && <NaytotTab property={property} />}
       {activeTab === 'valinta' && <ValintaTab />}
     </motion.div>
   );
@@ -190,7 +164,7 @@ export function Valitys() {
 
 /* ═══════════════════ ILMOITUS TAB ═══════════════════ */
 
-function IlmoitusTab() {
+function IlmoitusTab({ property }: { property: Property }) {
   const [published, setPublished] = useState(false);
   const [portals] = useState({
     oikotie: true,
@@ -210,20 +184,8 @@ function IlmoitusTab() {
 
   return (
     <motion.div variants={container} initial="hidden" animate="show">
-      {/* Property Selector */}
-      <motion.div variants={item} className="mb-4">
-        <label className="text-[10px] uppercase tracking-wider text-slate-500 font-medium mb-2 block">Kohde</label>
-        <select className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-green-400/30 appearance-none">
-          {properties.map(p => (
-            <option key={p.id} value={p.id} className="bg-[#1a1d23] text-slate-200">
-              {p.address} · {p.neighborhood} · {p.type}
-            </option>
-          ))}
-        </select>
-      </motion.div>
-
       {/* Photo Grid */}
-      <motion.div variants={item} className="mb-5">
+      <motion.div variants={item} className="mb-4">
         <label className="text-[10px] uppercase tracking-wider text-slate-500 font-medium mb-2 block">Kuvat</label>
         <div className="grid grid-cols-3 gap-2">
           {photoSlots.map(slot => (
@@ -236,7 +198,6 @@ function IlmoitusTab() {
               {slot.filled ? (
                 <>
                   <Camera className="w-5 h-5 text-white/30" />
-                  <span className="text-[9px] text-white/40 font-medium">{slot.label}</span>
                   <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-black/40 to-transparent" />
                   <span className="absolute bottom-1.5 left-2 text-[8px] text-white/60">{slot.label}</span>
                 </>
@@ -252,70 +213,54 @@ function IlmoitusTab() {
       </motion.div>
 
       {/* AI Badge */}
-      <motion.div variants={item} className="glass-green rounded-xl p-3 mb-5 flex items-start gap-2 shadow-lg shadow-black/20">
+      <motion.div variants={item} className="glass-green rounded-xl p-3 mb-4 flex items-start gap-2 shadow-lg shadow-black/20">
         <Sparkles className="w-4 h-4 text-green-400 shrink-0 mt-0.5" />
         <p className="text-[11px] text-slate-300 leading-relaxed">
-          <span className="text-green-400 font-semibold">AI-avustaja:</span> AI kirjoitti kuvauksen puolestasi asunnon tietojen perusteella. Muokkaa vapaasti.
+          <span className="text-green-400 font-semibold">AI-avustaja:</span> AI kirjoitti kuvauksen asunnon tietojen perusteella. Muokkaa vapaasti.
         </p>
       </motion.div>
 
       {/* Listing Form */}
-      <motion.div variants={item} className="space-y-3 mb-5">
-        <FormField label="Otsikko" value="Valoisa kaksio Kallion sydämessä" />
+      <motion.div variants={item} className="space-y-3 mb-4">
+        <FormField label="Otsikko" value={`Valoisa ${property.type === '2h+k' ? 'kaksio' : property.type === '3h+k' ? 'kolmio' : 'yksiö'} ${property.neighborhood}ssa`} />
         <div>
           <label className="text-[10px] uppercase tracking-wider text-slate-500 font-medium mb-1.5 block">Kuvaus</label>
           <textarea
             className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs text-slate-200 focus:outline-none focus:border-green-400/30 resize-none leading-relaxed"
-            rows={4}
-            defaultValue="Kaunis ja valoisa 48m² kaksio Fleminginkadulla. Asunto on hyvässä kunnossa, remontoitu keittiö ja kylpyhuone. Erinomainen sijainti palveluiden ja julkisen liikenteen äärellä. Rauhallinen taloyhtiö, hissi."
+            rows={3}
+            defaultValue={`Kaunis ja valoisa ${property.size}m² ${property.type === '2h+k' ? 'kaksio' : property.type === '3h+k' ? 'kolmio' : 'yksiö'} ${property.address.split(' ').slice(0, 1).join('')}lla. Asunto on hyvässä kunnossa. Erinomainen sijainti palveluiden äärellä.`}
           />
         </div>
-
         <div className="grid grid-cols-2 gap-3">
-          <FormField label="Vuokra" value="950 €/kk" />
+          <FormField label="Vuokra" value={`${property.currentRent} €/kk`} />
           <FormField label="Vakuus" value="2kk vuokraa" />
           <FormField label="Vapautuu" value="1.4.2026" />
-          <FormField label="Neliöt" value="48 m²" />
-          <FormField label="Huoneet" value="2h+k" />
+          <FormField label="Neliöt" value={`${property.size} m²`} />
+          <FormField label="Huoneet" value={property.type} />
           <FormField label="Kerros" value="3/5" />
-          <FormField label="Rakennusvuosi" value="1965" />
-          <FormField label="Sauna" value="Taloyhtiön sauna" />
-          <FormField label="Parveke" value="Kyllä" />
           <FormField label="Lemmikit" value="Neuvoteltavissa" />
+          <FormField label="Parveke" value="Kyllä" />
         </div>
       </motion.div>
 
       {/* Portal Checkboxes */}
-      <motion.div variants={item} className="mb-5">
+      <motion.div variants={item} className="mb-4">
         <label className="text-[10px] uppercase tracking-wider text-slate-500 font-medium mb-2 block">Julkaisualustat</label>
         <div className="space-y-2">
-          {[
-            { key: 'oikotie', label: 'Oikotie.fi' },
-            { key: 'vuokraovi', label: 'Vuokraovi.fi' },
-            { key: 'tori', label: 'Tori.fi' },
-            { key: 'facebook', label: 'Facebook Marketplace' },
-          ].map(portal => (
-            <label
-              key={portal.key}
-              className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] hover:bg-white/[0.05] transition-all duration-300 cursor-pointer"
-            >
-              <div
-                className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all duration-200 ${
-                  portals[portal.key as keyof typeof portals]
-                    ? 'bg-green-500 border-green-500'
-                    : 'bg-white/5 border-white/20'
-                }`}
-              >
-                {portals[portal.key as keyof typeof portals] && (
-                  <Check className="w-3 h-3 text-black" />
-                )}
-              </div>
-              <span className="text-xs text-slate-200">{portal.label}</span>
-              {published && portals[portal.key as keyof typeof portals] && (
-                <span className="ml-auto text-[10px] text-green-400">✅ Julkaistu</span>
-              )}
-            </label>
-          ))}
+          {['Oikotie.fi', 'Vuokraovi.fi', 'Tori.fi', 'Facebook Marketplace'].map((label, i) => {
+            const keys = ['oikotie', 'vuokraovi', 'tori', 'facebook'] as const;
+            return (
+              <label key={label} className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] hover:bg-white/[0.05] transition-all cursor-pointer">
+                <div className={`w-5 h-5 rounded-md border flex items-center justify-center ${
+                  portals[keys[i]] ? 'bg-green-500 border-green-500' : 'bg-white/5 border-white/20'
+                }`}>
+                  {portals[keys[i]] && <Check className="w-3 h-3 text-black" />}
+                </div>
+                <span className="text-xs text-slate-200">{label}</span>
+                {published && portals[keys[i]] && <span className="ml-auto text-[10px] text-green-400">✅ Julkaistu</span>}
+              </label>
+            );
+          })}
         </div>
       </motion.div>
 
@@ -374,76 +319,36 @@ interface Candidate {
 
 const candidates: Candidate[] = [
   {
-    id: 'c1',
-    name: 'Matti Virtanen',
-    age: 32,
-    profession: 'Insinööri',
-    householdSize: '2 hlö talous',
-    income: 4200,
+    id: 'c1', name: 'Matti Virtanen', age: 32, profession: 'Insinööri', householdSize: '2 hlö talous', income: 4200,
     message: 'Hei! Olemme kiinnostuneita asunnosta. Olemme rauhallinen pariskunta ja molemmat työssäkäyviä.',
-    status: '⭐ Suositeltu',
-    statusColor: 'text-amber-400 bg-amber-400/10 border-amber-400/20',
-    aiScore: 95,
-    recommended: true,
+    status: '⭐ Suositeltu', statusColor: 'text-amber-400 bg-amber-400/10 border-amber-400/20', aiScore: 95, recommended: true,
   },
   {
-    id: 'c2',
-    name: 'Anna Korhonen',
-    age: 28,
-    profession: 'Graafikko',
-    householdSize: '1 hlö',
-    income: 3100,
+    id: 'c2', name: 'Anna Korhonen', age: 28, profession: 'Graafikko', householdSize: '1 hlö', income: 3100,
     message: 'Moi! Etsin yksiötä/kaksiota Kalliosta. Olen siisti ja rauhallinen vuokralainen.',
-    status: 'Uusi',
-    statusColor: 'text-blue-400 bg-blue-400/10 border-blue-400/20',
-    aiScore: 78,
-    recommended: false,
+    status: 'Uusi', statusColor: 'text-blue-400 bg-blue-400/10 border-blue-400/20', aiScore: 78, recommended: false,
   },
   {
-    id: 'c3',
-    name: 'Juha Mäkinen',
-    age: 45,
-    profession: 'Opettaja',
-    householdSize: '3 hlö (1 lapsi)',
-    income: 3800,
+    id: 'c3', name: 'Juha Mäkinen', age: 45, profession: 'Opettaja', householdSize: '3 hlö (1 lapsi)', income: 3800,
     message: 'Terve, olisimme kiinnostuneita. Meillä on 5-vuotias lapsi ja kissa.',
-    status: 'Näyttö sovittu 15.3.',
-    statusColor: 'text-green-400 bg-green-400/10 border-green-400/20',
-    aiScore: 82,
-    recommended: false,
+    status: 'Näyttö sovittu 15.3.', statusColor: 'text-green-400 bg-green-400/10 border-green-400/20', aiScore: 82, recommended: false,
   },
   {
-    id: 'c4',
-    name: 'Li Wei',
-    age: 25,
-    profession: 'Opiskelija / osa-aikatyö',
-    householdSize: '1 hlö',
-    income: 1800,
+    id: 'c4', name: 'Li Wei', age: 25, profession: 'Opiskelija / osa-aikatyö', householdSize: '1 hlö', income: 1800,
     message: "Hello! I'm an exchange student at Aalto University. Very interested!",
-    status: 'Vastaus lähetetty',
-    statusColor: 'text-slate-400 bg-white/5 border-white/10',
-    aiScore: 45,
-    recommended: false,
+    status: 'Vastaus lähetetty', statusColor: 'text-slate-400 bg-white/5 border-white/10', aiScore: 45, recommended: false,
   },
   {
-    id: 'c5',
-    name: 'Petra Nieminen',
-    age: 38,
-    profession: 'Sairaanhoitaja',
-    householdSize: '1 hlö',
-    income: 3400,
+    id: 'c5', name: 'Petra Nieminen', age: 38, profession: 'Sairaanhoitaja', householdSize: '1 hlö', income: 3400,
     message: 'Hei! Olen muuttamassa Helsinkiin työn perässä. Rauhallinen ja luotettava vuokralainen.',
-    status: 'Uusi',
-    statusColor: 'text-blue-400 bg-blue-400/10 border-blue-400/20',
-    aiScore: 80,
-    recommended: false,
+    status: 'Uusi', statusColor: 'text-blue-400 bg-blue-400/10 border-blue-400/20', aiScore: 80, recommended: false,
   },
 ];
 
 function HakijatTab() {
   return (
     <motion.div variants={container} initial="hidden" animate="show">
-      {/* AI Recommendation Card */}
+      {/* AI Recommendation */}
       <motion.div variants={item} className="glass rounded-2xl p-4 mb-4 shadow-lg shadow-black/20 border border-green-400/15" style={{ boxShadow: '0 0 30px rgba(74, 222, 128, 0.05)' }}>
         <div className="flex items-center gap-2 mb-2">
           <Sparkles className="w-4 h-4 text-green-400" />
@@ -454,13 +359,11 @@ function HakijatTab() {
         </p>
       </motion.div>
 
-      {/* Candidate Count */}
       <motion.div variants={item} className="flex items-center gap-2 mb-3">
         <Users className="w-3.5 h-3.5 text-slate-500" />
         <span className="text-xs text-slate-500">{candidates.length} hakijaa</span>
       </motion.div>
 
-      {/* Candidate Cards */}
       <div className="space-y-3">
         {candidates.map(candidate => (
           <motion.div
@@ -472,7 +375,6 @@ function HakijatTab() {
             style={candidate.recommended ? { boxShadow: '0 0 20px rgba(74, 222, 128, 0.04)' } : {}}
           >
             <div className="flex items-start gap-3">
-              {/* Avatar */}
               <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
                 candidate.recommended
                   ? 'bg-gradient-to-br from-green-500/30 to-green-600/15 border border-green-500/20'
@@ -482,17 +384,11 @@ function HakijatTab() {
                   {candidate.name[0]}
                 </span>
               </div>
-
               <div className="flex-1 min-w-0">
-                {/* Name + Status */}
                 <div className="flex items-center gap-2 flex-wrap mb-1">
                   <h3 className="text-sm font-semibold text-slate-100">{candidate.name}</h3>
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full border font-medium ${candidate.statusColor}`}>
-                    {candidate.status}
-                  </span>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full border font-medium ${candidate.statusColor}`}>{candidate.status}</span>
                 </div>
-
-                {/* Details */}
                 <div className="flex items-center gap-1.5 flex-wrap mb-2">
                   <span className="text-[10px] text-slate-500">{candidate.age}v</span>
                   <span className="text-slate-700">·</span>
@@ -502,13 +398,9 @@ function HakijatTab() {
                   <span className="text-slate-700">·</span>
                   <span className="text-[10px] text-slate-400 font-medium">{candidate.income.toLocaleString('fi-FI')} €/kk</span>
                 </div>
-
-                {/* Message */}
                 <div className="bg-white/[0.03] rounded-lg p-2.5 mb-3">
                   <p className="text-[11px] text-slate-400 italic leading-relaxed">"{candidate.message}"</p>
                 </div>
-
-                {/* AI Score + Actions */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
                     <div className="w-16 h-1.5 bg-white/5 rounded-full overflow-hidden">
@@ -524,12 +416,8 @@ function HakijatTab() {
                     }`}>{candidate.aiScore}%</span>
                   </div>
                   <div className="flex gap-1.5">
-                    <button className="px-2.5 py-1.5 rounded-lg text-[10px] font-medium text-green-400 bg-green-400/10 hover:bg-green-400/15 transition-all">
-                      Vastaa
-                    </button>
-                    <button className="px-2.5 py-1.5 rounded-lg text-[10px] font-medium text-blue-400 bg-blue-400/10 hover:bg-blue-400/15 transition-all">
-                      Kutsu näyttöön
-                    </button>
+                    <button className="px-2.5 py-1.5 rounded-lg text-[10px] font-medium text-green-400 bg-green-400/10 hover:bg-green-400/15 transition-all">Vastaa</button>
+                    <button className="px-2.5 py-1.5 rounded-lg text-[10px] font-medium text-blue-400 bg-blue-400/10 hover:bg-blue-400/15 transition-all">Näyttö</button>
                     <button className="px-2.5 py-1.5 rounded-lg text-[10px] font-medium text-slate-500 bg-white/5 hover:bg-white/[0.08] transition-all">
                       <X className="w-3 h-3" />
                     </button>
@@ -546,119 +434,58 @@ function HakijatTab() {
 
 /* ═══════════════════ NÄYTÖT TAB ═══════════════════ */
 
-interface Showing {
-  id: string;
-  date: string;
-  time: string;
-  candidate: string;
-  extra: string;
-  address: string;
-  status: 'upcoming' | 'confirmed' | 'completed';
-  notes?: string;
-  reminders?: string[];
-}
+function NaytotTab({ property }: { property: Property }) {
+  const showings = [
+    { id: 's3', date: '12.3.2026', time: '18:00', candidate: 'Anna Korhonen', extra: '', status: 'completed' as const, notes: 'Positiivinen vaikutelma, siisti olemus, kyseli taloyhtiöstä' },
+    { id: 's1', date: '15.3.2026', time: '17:00', candidate: 'Juha Mäkinen', extra: '+perhe', status: 'upcoming' as const, reminders: ['Muistutus lähetetty 14.3. ✅', 'Kalenterimerkintä: ✅ Vuokranantaja ✅ Vuokralainen'] },
+    { id: 's2', date: '16.3.2026', time: '10:00', candidate: 'Matti Virtanen', extra: '+puoliso', status: 'confirmed' as const },
+  ];
 
-const showings: Showing[] = [
-  {
-    id: 's3',
-    date: '12.3.2026',
-    time: '18:00',
-    candidate: 'Anna Korhonen',
-    extra: '',
-    address: 'Fleminginkatu 15 B',
-    status: 'completed',
-    notes: 'Positiivinen vaikutelma, siisti olemus, kyseli taloyhtiöstä',
-  },
-  {
-    id: 's1',
-    date: '15.3.2026',
-    time: '17:00',
-    candidate: 'Juha Mäkinen',
-    extra: '+perhe',
-    address: 'Fleminginkatu 15 B',
-    status: 'upcoming',
-    reminders: ['Muistutus lähetetty 14.3. ✅', 'Kalenterimerkintä: ✅ Vuokranantaja ✅ Vuokralainen'],
-  },
-  {
-    id: 's2',
-    date: '16.3.2026',
-    time: '10:00',
-    candidate: 'Matti Virtanen',
-    extra: '+puoliso',
-    address: 'Fleminginkatu 15 B',
-    status: 'confirmed',
-  },
-];
-
-function NaytotTab() {
   return (
     <motion.div variants={container} initial="hidden" animate="show">
-      {/* Smart Tip */}
-      <motion.div variants={item} className="glass-green rounded-xl p-3 mb-5 flex items-start gap-2 shadow-lg shadow-black/20">
+      <motion.div variants={item} className="glass-green rounded-xl p-3 mb-4 flex items-start gap-2 shadow-lg shadow-black/20">
         <span className="text-base shrink-0">💡</span>
         <p className="text-[11px] text-slate-300 leading-relaxed">
           <span className="text-green-400 font-semibold">Vinkki:</span> Varaa näytöille 30 min välit. Näytä ensin yleiset tilat.
         </p>
       </motion.div>
 
-      {/* Showings List */}
-      <div className="space-y-3 mb-5">
+      <div className="space-y-3 mb-4">
         {showings.map(showing => (
           <motion.div
             key={showing.id}
             variants={item}
             className={`glass rounded-2xl p-4 shadow-lg shadow-black/20 border-l-[3px] ${
-              showing.status === 'completed'
-                ? 'border-l-green-500'
-                : showing.status === 'confirmed'
-                  ? 'border-l-blue-400'
-                  : 'border-l-blue-500'
+              showing.status === 'completed' ? 'border-l-green-500' :
+              showing.status === 'confirmed' ? 'border-l-blue-400' : 'border-l-blue-500'
             }`}
           >
             <div className="flex items-start gap-3">
-              {/* Date Badge */}
-              <div className="shrink-0 text-center">
-                <div className={`w-11 h-11 rounded-xl flex flex-col items-center justify-center ${
-                  showing.status === 'completed'
-                    ? 'bg-green-500/10 border border-green-500/20'
-                    : 'bg-blue-500/10 border border-blue-500/20'
-                }`}>
-                  <span className="text-lg">📅</span>
-                </div>
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                showing.status === 'completed' ? 'bg-green-500/10 border border-green-500/20' : 'bg-blue-500/10 border border-blue-500/20'
+              }`}>
+                <span className="text-lg">📅</span>
               </div>
-
               <div className="flex-1 min-w-0">
-                {/* Date + Time */}
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-sm font-semibold text-slate-100">{showing.date} klo {showing.time}</span>
-                  {showing.status === 'completed' && (
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-green-400/10 text-green-400 border border-green-400/20 font-medium">PIDETTY ✅</span>
-                  )}
-                  {showing.status === 'confirmed' && (
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-400/10 text-blue-400 border border-blue-400/20 font-medium">Vahvistettu ✅</span>
-                  )}
+                  {showing.status === 'completed' && <span className="text-[10px] px-2 py-0.5 rounded-full bg-green-400/10 text-green-400 border border-green-400/20 font-medium">PIDETTY ✅</span>}
+                  {showing.status === 'confirmed' && <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-400/10 text-blue-400 border border-blue-400/20 font-medium">Vahvistettu ✅</span>}
                 </div>
-
-                {/* Candidate + Address */}
                 <p className="text-xs text-slate-300 mb-1">
                   {showing.candidate} {showing.extra && <span className="text-slate-500">({showing.extra})</span>}
                 </p>
-                <p className="text-[10px] text-slate-500 mb-2">{showing.address}</p>
-
-                {/* Reminders */}
-                {showing.reminders && (
+                <p className="text-[10px] text-slate-500 mb-2">{property.address}</p>
+                {'reminders' in showing && showing.reminders && (
                   <div className="space-y-1 mb-2">
                     {showing.reminders.map((r, i) => (
                       <p key={i} className="text-[10px] text-slate-400 flex items-center gap-1.5">
-                        <Check className="w-3 h-3 text-green-400 shrink-0" />
-                        {r}
+                        <Check className="w-3 h-3 text-green-400 shrink-0" />{r}
                       </p>
                     ))}
                   </div>
                 )}
-
-                {/* Notes for completed */}
-                {showing.notes && (
+                {'notes' in showing && showing.notes && (
                   <div className="bg-white/[0.03] rounded-lg p-2.5 mt-2">
                     <p className="text-[10px] text-slate-500 mb-0.5 font-medium">Muistiinpano:</p>
                     <p className="text-[11px] text-slate-400 italic">"{showing.notes}"</p>
@@ -670,9 +497,8 @@ function NaytotTab() {
         ))}
       </div>
 
-      {/* Add Showing Button */}
       <motion.div variants={item}>
-        <button className="w-full glass rounded-2xl p-4 flex items-center justify-center gap-2 text-sm font-medium text-green-400 hover:bg-white/[0.08] transition-all duration-300 border border-dashed border-green-400/20">
+        <button className="w-full glass rounded-2xl p-4 flex items-center justify-center gap-2 text-sm font-medium text-green-400 hover:bg-white/[0.08] transition-all border border-dashed border-green-400/20">
           <Calendar className="w-4 h-4" />
           Lisää näyttö
         </button>
@@ -689,18 +515,16 @@ function ValintaTab() {
 
   return (
     <motion.div variants={container} initial="hidden" animate="show">
-      {/* Comparison Header */}
       <motion.div variants={item} className="mb-4">
         <h2 className="text-sm font-semibold text-slate-100 mb-1">Vertailu</h2>
         <p className="text-[10px] text-slate-500">Parhaat hakijat rinnakkain</p>
       </motion.div>
 
-      {/* Comparison Cards */}
       <motion.div variants={item} className="flex gap-2 mb-5 overflow-x-auto pb-2">
         {topCandidates.map(candidate => (
           <div
             key={candidate.id}
-            className={`glass rounded-2xl p-4 min-w-[160px] flex-1 shadow-lg shadow-black/20 transition-all duration-300 ${
+            className={`glass rounded-2xl p-4 min-w-[160px] flex-1 shadow-lg shadow-black/20 ${
               candidate.recommended ? 'border border-green-400/20' : 'border border-white/5'
             }`}
           >
@@ -715,106 +539,61 @@ function ValintaTab() {
                 </span>
               </div>
               <h3 className="text-xs font-semibold text-slate-100">{candidate.name}</h3>
-              {candidate.recommended && (
-                <span className="text-[9px] text-green-400 font-medium">⭐ AI-suositeltu</span>
-              )}
+              {candidate.recommended && <span className="text-[9px] text-green-400 font-medium">⭐ AI-suositeltu</span>}
             </div>
             <div className="space-y-1.5 text-[10px]">
-              <div className="flex justify-between">
-                <span className="text-slate-500">Ikä</span>
-                <span className="text-slate-300">{candidate.age}v</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">Ammatti</span>
-                <span className="text-slate-300">{candidate.profession}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">Talous</span>
-                <span className="text-slate-300">{candidate.householdSize}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">Tulot</span>
-                <span className="text-slate-300 font-medium">{candidate.income.toLocaleString('fi-FI')} €</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">Suhde</span>
-                <span className={`font-medium ${
-                  candidate.income / 950 >= 3 ? 'text-green-400' : 'text-amber-400'
-                }`}>{(candidate.income / 950).toFixed(1)}× vuokra</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-slate-500">AI-pisteet</span>
-                <span className={`font-medium ${
-                  candidate.aiScore >= 80 ? 'text-green-400' : 'text-amber-400'
-                }`}>{candidate.aiScore}%</span>
-              </div>
+              <div className="flex justify-between"><span className="text-slate-500">Ikä</span><span className="text-slate-300">{candidate.age}v</span></div>
+              <div className="flex justify-between"><span className="text-slate-500">Ammatti</span><span className="text-slate-300">{candidate.profession}</span></div>
+              <div className="flex justify-between"><span className="text-slate-500">Tulot</span><span className="text-slate-300 font-medium">{candidate.income.toLocaleString('fi-FI')} €</span></div>
+              <div className="flex justify-between"><span className="text-slate-500">Suhde</span><span className={`font-medium ${candidate.income / 950 >= 3 ? 'text-green-400' : 'text-amber-400'}`}>{(candidate.income / 950).toFixed(1)}× vuokra</span></div>
+              <div className="flex justify-between"><span className="text-slate-500">AI</span><span className={`font-medium ${candidate.aiScore >= 80 ? 'text-green-400' : 'text-amber-400'}`}>{candidate.aiScore}%</span></div>
             </div>
             {!selected && (
               <button
                 onClick={() => candidate.recommended && setSelected(true)}
                 className={`w-full mt-3 py-2 rounded-xl text-[10px] font-semibold transition-all ${
-                  candidate.recommended
-                    ? 'bg-green-500 text-black hover:bg-green-400'
-                    : 'bg-white/5 text-slate-400 border border-white/10 hover:bg-white/[0.08]'
+                  candidate.recommended ? 'bg-green-500 text-black hover:bg-green-400' : 'bg-white/5 text-slate-400 border border-white/10 hover:bg-white/[0.08]'
                 }`}
               >
-                Valitse vuokralainen
+                Valitse
               </button>
             )}
           </div>
         ))}
       </motion.div>
 
-      {/* Selection Flow */}
       {selected && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="space-y-3"
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
           <div className="glass-green rounded-2xl p-5 shadow-lg shadow-black/20">
             <h3 className="text-sm font-semibold text-green-400 mb-4">Vuokrausprosessi</h3>
             <div className="space-y-3">
               <FlowStep icon="✅" label="Vuokralainen valittu: Matti Virtanen" done />
-              <FlowStep icon="⏳" label="Sopimus lähetetty allekirjoitettavaksi" pending />
-              <FlowStep icon="⏳" label="Vakuus maksettu" pending />
-              <FlowStep icon="⏳" label="Avainten luovutus" pending />
+              <FlowStep icon="⏳" label="Sopimus lähetetty allekirjoitettavaksi" />
+              <FlowStep icon="⏳" label="Vakuus maksettu" />
+              <FlowStep icon="⏳" label="Avainten luovutus" />
             </div>
           </div>
-
-          {/* Contract Preview */}
           <div className="glass rounded-2xl p-5 shadow-lg shadow-black/20 border border-white/5">
             <div className="flex items-center gap-2 mb-3">
               <FileText className="w-4 h-4 text-slate-400" />
               <h3 className="text-sm font-semibold text-slate-100">Vuokrasopimus</h3>
             </div>
             <div className="bg-white/[0.03] rounded-xl p-4 mb-3 space-y-2">
-              <div className="flex justify-between text-xs">
-                <span className="text-slate-500">Vuokranantaja</span>
-                <span className="text-slate-200">Jyri Aleksi Sosaari</span>
-              </div>
-              <div className="flex justify-between text-xs">
-                <span className="text-slate-500">Vuokralainen</span>
-                <span className="text-slate-200">Matti Virtanen</span>
-              </div>
-              <div className="flex justify-between text-xs">
-                <span className="text-slate-500">Kohde</span>
-                <span className="text-slate-200">Fleminginkatu 15 B 23</span>
-              </div>
-              <div className="flex justify-between text-xs">
-                <span className="text-slate-500">Vuokra</span>
-                <span className="text-slate-200">950 €/kk</span>
-              </div>
-              <div className="flex justify-between text-xs">
-                <span className="text-slate-500">Alkaa</span>
-                <span className="text-slate-200">1.4.2026</span>
-              </div>
-              <div className="flex justify-between text-xs">
-                <span className="text-slate-500">Vakuus</span>
-                <span className="text-slate-200">1 900 €</span>
-              </div>
+              {[
+                ['Vuokranantaja', 'Jyri Aleksi Sosaari'],
+                ['Vuokralainen', 'Matti Virtanen'],
+                ['Kohde', 'Fleminginkatu 15 B 23'],
+                ['Vuokra', '950 €/kk'],
+                ['Alkaa', '1.4.2026'],
+                ['Vakuus', '1 900 €'],
+              ].map(([label, value]) => (
+                <div key={label} className="flex justify-between text-xs">
+                  <span className="text-slate-500">{label}</span>
+                  <span className="text-slate-200">{value}</span>
+                </div>
+              ))}
             </div>
-            <button className="w-full bg-green-500 text-black rounded-xl p-3.5 flex items-center justify-center gap-2 font-semibold text-sm hover:bg-green-400 transition-all duration-300 active:scale-[0.98]">
+            <button className="w-full bg-green-500 text-black rounded-xl p-3.5 flex items-center justify-center gap-2 font-semibold text-sm hover:bg-green-400 transition-all active:scale-[0.98]">
               <FileText className="w-4 h-4" />
               Allekirjoita sähköisesti
             </button>
@@ -825,7 +604,7 @@ function ValintaTab() {
   );
 }
 
-function FlowStep({ icon, label, done }: { icon: string; label: string; done?: boolean; pending?: boolean }) {
+function FlowStep({ icon, label, done }: { icon: string; label: string; done?: boolean }) {
   return (
     <div className="flex items-center gap-3">
       <span className="text-base shrink-0">{icon}</span>

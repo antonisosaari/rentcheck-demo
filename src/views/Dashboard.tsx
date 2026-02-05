@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
-import { ChevronRight, Heart, MessageCircle, Gift } from 'lucide-react';
-import { properties, getSummaryStats, taxSummary2025 } from '../data/mockData';
+import { ChevronRight, Heart, MessageCircle, Calendar, Check } from 'lucide-react';
+import { getSummaryStats, taxSummary2025 } from '../data/mockData';
 import type { View } from '../App';
 
 const container = {
@@ -17,7 +17,7 @@ const item = {
 };
 
 interface DashboardProps {
-  onSelectProperty: (id: string) => void;
+  onSelectProperty: (id: string, initialTab?: string) => void;
   onNavigate: (view: View) => void;
 }
 
@@ -39,12 +39,12 @@ export function Dashboard({ onSelectProperty, onNavigate }: DashboardProps) {
           <span className="text-lg text-slate-500">/kk</span>
         </div>
         <p className="text-sm text-slate-400 mt-2">
-          {stats.totalProperties} asuntoa · Seuraava korotus {stats.nextRenewal}pv
+          {stats.totalProperties} asuntoa · Käyttöaste 100%
         </p>
       </motion.div>
 
       {/* 3 Stat Cards Row */}
-      <motion.div variants={item} className="grid grid-cols-3 gap-3 mb-4">
+      <motion.div variants={item} className="grid grid-cols-3 gap-3 mb-5">
         <div className="glass rounded-2xl p-4 shadow-lg shadow-black/20">
           <p className="text-[10px] uppercase tracking-wider text-slate-500 mb-1">Delta</p>
           <p className="text-lg font-bold text-green-400">+€{stats.avgDelta}/kk</p>
@@ -56,17 +56,86 @@ export function Dashboard({ onSelectProperty, onNavigate }: DashboardProps) {
           <p className="text-[10px] text-slate-500">nettotulo</p>
         </div>
         <div className="glass rounded-2xl p-4 shadow-lg shadow-black/20">
-          <p className="text-[10px] uppercase tracking-wider text-slate-500 mb-1">Käyttöaste</p>
-          <p className="text-lg font-bold text-green-400">100%</p>
-          <p className="text-[10px] text-slate-500">kaikki vuokrattu</p>
+          <p className="text-[10px] uppercase tracking-wider text-slate-500 mb-1">Korotus</p>
+          <p className="text-lg font-bold text-amber-400">{stats.nextRenewal}pv</p>
+          <p className="text-[10px] text-slate-500">seuraava</p>
         </div>
       </motion.div>
 
-      {/* Tenant Relationship Health Card */}
+      {/* Section Label */}
+      <motion.div variants={item} className="mb-3">
+        <p className="text-xs uppercase tracking-wider text-slate-500 font-medium">Huomioitavaa</p>
+      </motion.div>
+
+      {/* Urgent: Rent Increase */}
+      <motion.div variants={item}>
+        <button
+          onClick={() => onSelectProperty('kallio-1', 'sopimus')}
+          className="w-full glass-red rounded-2xl p-4 mb-3 flex items-center gap-3 text-left transition-all duration-300 hover:bg-white/[0.08] shadow-lg shadow-black/20"
+        >
+          <span className="text-xl shrink-0">⚠️</span>
+          <div className="flex-1 min-w-0">
+            <p className="font-semibold text-red-400 text-sm">Vuokrankorotus: Fleminginkatu</p>
+            <p className="text-xs text-slate-400 mt-0.5">Ilmoita vuokralaiselle viim. 15.2.2026</p>
+          </div>
+          <ChevronRight className="w-4 h-4 text-slate-500 shrink-0" />
+        </button>
+      </motion.div>
+
+      {/* Active Listing Pipeline */}
+      <motion.div variants={item}>
+        <button
+          onClick={() => onSelectProperty('kallio-1', 'valitys')}
+          className="w-full glass rounded-2xl p-4 mb-3 text-left transition-all duration-300 hover:bg-white/[0.08] shadow-lg shadow-black/20 border border-green-400/10"
+        >
+          <div className="flex items-center gap-3 mb-3">
+            <span className="text-xl shrink-0">📢</span>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-slate-100 text-sm">Välitys: Fleminginkatu 15 B</p>
+              <p className="text-xs text-slate-400 mt-0.5">5 hakijaa · 2 näyttöä sovittu · 3 pv sitten</p>
+            </div>
+            <ChevronRight className="w-4 h-4 text-slate-500 shrink-0" />
+          </div>
+          {/* Mini Pipeline */}
+          <div className="flex items-center gap-1.5">
+            {['Ilmoitus', 'Hakijat', 'Näytöt', 'Valinta', 'Sopimus'].map((step, i) => (
+              <div key={step} className="flex items-center gap-1.5 flex-1">
+                <div className={`w-4 h-4 rounded-full flex items-center justify-center text-[8px] ${
+                  i === 0 ? 'bg-green-500/20 text-green-400 border border-green-500/30' :
+                  i === 1 ? 'bg-green-500 text-black' :
+                  'bg-white/5 text-slate-600 border border-white/10'
+                }`}>
+                  {i === 0 ? <Check className="w-2.5 h-2.5" /> : (i + 1)}
+                </div>
+                {i < 4 && <div className={`flex-1 h-0.5 ${i < 1 ? 'bg-green-500/30' : 'bg-white/5'}`} />}
+              </div>
+            ))}
+          </div>
+        </button>
+      </motion.div>
+
+      {/* Upcoming Showing */}
+      <motion.div variants={item}>
+        <button
+          onClick={() => onSelectProperty('kallio-1', 'valitys')}
+          className="w-full glass rounded-2xl p-4 mb-3 flex items-center gap-3 text-left transition-all duration-300 hover:bg-white/[0.08] shadow-lg shadow-black/20"
+        >
+          <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0">
+            <Calendar className="w-5 h-5 text-blue-400" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="font-semibold text-slate-100 text-sm">Näyttö 15.3. klo 17:00</p>
+            <p className="text-xs text-slate-400 mt-0.5">Juha Mäkinen (+perhe) · Fleminginkatu 15 B</p>
+          </div>
+          <ChevronRight className="w-4 h-4 text-slate-500 shrink-0" />
+        </button>
+      </motion.div>
+
+      {/* Tenant Relationships */}
       <motion.div variants={item}>
         <button
           onClick={() => onNavigate('messages')}
-          className="w-full glass rounded-2xl p-5 mb-4 text-left transition-all duration-300 hover:bg-white/[0.08] shadow-lg shadow-black/20 border border-green-400/10"
+          className="w-full glass rounded-2xl p-4 mb-3 text-left transition-all duration-300 hover:bg-white/[0.08] shadow-lg shadow-black/20 border border-green-400/10"
         >
           <div className="flex items-center gap-2 mb-3">
             <Heart className="w-4 h-4 text-green-400" />
@@ -88,24 +157,20 @@ export function Dashboard({ onSelectProperty, onNavigate }: DashboardProps) {
           </div>
           <div className="flex items-center gap-2">
             <div className="flex -space-x-2">
-              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-green-500/40 to-green-600/20 border border-green-500/30 flex items-center justify-center">
-                <span className="text-[9px] font-bold text-green-400">M</span>
-              </div>
-              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-green-500/40 to-green-600/20 border border-green-500/30 flex items-center justify-center">
-                <span className="text-[9px] font-bold text-green-400">A</span>
-              </div>
-              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-green-500/40 to-green-600/20 border border-green-500/30 flex items-center justify-center">
-                <span className="text-[9px] font-bold text-green-400">J</span>
-              </div>
+              {['M', 'A', 'J'].map(initial => (
+                <div key={initial} className="w-6 h-6 rounded-full bg-gradient-to-br from-green-500/40 to-green-600/20 border border-green-500/30 flex items-center justify-center">
+                  <span className="text-[9px] font-bold text-green-400">{initial}</span>
+                </div>
+              ))}
             </div>
-            <span className="text-[10px] text-slate-500">Kaikki vuokralaiset tavoitettavissa</span>
+            <span className="text-[10px] text-slate-500">Kaikki tavoitettavissa</span>
             <ChevronRight className="w-3 h-3 text-slate-600 ml-auto" />
           </div>
         </button>
       </motion.div>
 
-      {/* Smart Tip Card */}
-      <motion.div variants={item} className="glass-green rounded-2xl p-4 mb-4 shadow-lg shadow-black/20">
+      {/* Smart Tip */}
+      <motion.div variants={item} className="glass-green rounded-2xl p-4 mb-3 shadow-lg shadow-black/20">
         <div className="flex items-start gap-3">
           <span className="text-lg shrink-0">💡</span>
           <div>
@@ -121,111 +186,13 @@ export function Dashboard({ onSelectProperty, onNavigate }: DashboardProps) {
                 <MessageCircle className="w-3 h-3" />
                 Lähetä viesti
               </button>
-              <button
-                onClick={() => onNavigate('services')}
-                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-medium text-slate-400 bg-white/5 hover:bg-white/[0.08] transition-all duration-300"
-              >
-                <Gift className="w-3 h-3" />
-                Tilaa lahja
-              </button>
             </div>
           </div>
         </div>
       </motion.div>
 
-      {/* Alert Card */}
-      <motion.div variants={item}>
-        <button
-          onClick={() => onNavigate('more')}
-          className="w-full glass-red rounded-2xl p-4 mb-4 flex items-center gap-3 text-left transition-all duration-300 hover:bg-white/[0.08] shadow-lg shadow-black/20"
-        >
-          <span className="text-xl shrink-0">⚠️</span>
-          <div className="flex-1 min-w-0">
-            <p className="font-semibold text-red-400 text-sm">Vuokrankorotus: Fleminginkatu</p>
-            <p className="text-xs text-slate-400 mt-0.5">Ilmoita vuokralaiselle viim. 15.2.2026</p>
-          </div>
-          <ChevronRight className="w-4 h-4 text-slate-500 shrink-0" />
-        </button>
-      </motion.div>
-
-      {/* Välitys Card */}
-      <motion.div variants={item}>
-        <button
-          onClick={() => onNavigate('valitys')}
-          className="w-full glass rounded-2xl p-4 mb-6 text-left transition-all duration-300 hover:bg-white/[0.08] shadow-lg shadow-black/20 border border-green-400/10"
-        >
-          <div className="flex items-center gap-3 mb-3">
-            <span className="text-xl shrink-0">📢</span>
-            <div className="flex-1 min-w-0">
-              <p className="font-semibold text-slate-100 text-sm">Välitys: Fleminginkatu 15 B</p>
-              <p className="text-xs text-slate-400 mt-0.5">5 hakijaa · 2 näyttöä sovittu · Julkaistu 3 pv sitten</p>
-            </div>
-            <ChevronRight className="w-4 h-4 text-slate-500 shrink-0" />
-          </div>
-          {/* Pipeline Progress */}
-          <div className="flex items-center gap-1">
-            <div className="flex-1 h-1.5 bg-green-500/30 rounded-full overflow-hidden">
-              <div className="h-full bg-green-500 rounded-full" style={{ width: '40%' }} />
-            </div>
-            <span className="text-[10px] text-green-400 font-medium ml-2 shrink-0">Yhteydenotot</span>
-          </div>
-        </button>
-      </motion.div>
-
-      {/* Section Label */}
-      <motion.div variants={item} className="mb-3">
-        <p className="text-xs uppercase tracking-wider text-slate-500 font-medium">Asunnot</p>
-      </motion.div>
-
-      {/* Property Cards */}
-      <div className="space-y-3">
-        {properties.map((property) => {
-          const delta = property.marketEstimate - property.currentRent;
-
-          return (
-            <motion.button
-              key={property.id}
-              variants={item}
-              onClick={() => onSelectProperty(property.id)}
-              whileTap={{ scale: 0.98 }}
-              className="w-full glass rounded-2xl p-4 flex items-center gap-4 text-left transition-all duration-300 hover:bg-white/[0.08] shadow-lg shadow-black/20"
-            >
-              {/* Neighborhood Initial */}
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-green-500/20 to-green-600/10 border border-green-500/20 flex items-center justify-center shrink-0">
-                <span className="text-green-400 font-bold text-lg">{property.neighborhood[0]}</span>
-              </div>
-
-              {/* Property Info */}
-              <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-slate-100 text-sm truncate">
-                  {property.neighborhood} · {property.type}
-                </h3>
-                <p className="text-xs text-slate-500 truncate">{property.address}</p>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="text-sm font-semibold text-green-400">{property.currentRent} €/kk</span>
-                  <span className="text-slate-600">·</span>
-                  <span className="text-xs text-slate-500">{property.tenantName}</span>
-                </div>
-              </div>
-
-              {/* Delta Badge */}
-              <div className="flex flex-col items-end shrink-0">
-                <span className="text-xs font-semibold text-green-400 bg-green-400/10 px-2 py-1 rounded-lg">
-                  +{delta} €
-                </span>
-                <span className="text-[10px] text-slate-500 mt-1">
-                  alle markkinan
-                </span>
-              </div>
-
-              <ChevronRight className="w-4 h-4 text-slate-600 shrink-0" />
-            </motion.button>
-          );
-        })}
-      </div>
-
       {/* Footer */}
-      <motion.div variants={item} className="mt-8 text-center">
+      <motion.div variants={item} className="mt-6 text-center">
         <p className="text-xs text-slate-600">
           Päivitetty 5.2.2026 klo 14:30
         </p>
