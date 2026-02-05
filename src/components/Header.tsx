@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowLeft, LayoutDashboard, Bell, Building2 } from 'lucide-react';
+import { ArrowLeft, LayoutDashboard, Bell, Building2, FileText, Receipt, Calculator } from 'lucide-react';
 import type { View } from '../App';
 
 interface HeaderProps {
@@ -30,11 +30,11 @@ export function Header({ currentView, onNavigate, onBack, showBack }: HeaderProp
             </div>
             <div className="flex flex-col items-start">
               <span className="text-lg font-bold text-gray-900 leading-tight">RentCheck</span>
-              <span className="text-[10px] text-gray-400 leading-tight tracking-wide uppercase hidden sm:block">AI Rental Market Monitor</span>
+              <span className="text-[10px] text-gray-400 leading-tight tracking-wide uppercase hidden sm:block">Vuokranhallinnan kokonaisratkaisu</span>
             </div>
           </button>
         </div>
-        <nav className="flex items-center gap-1">
+        <nav className="flex items-center gap-0.5">
           <NavButton
             active={currentView === 'dashboard'}
             onClick={() => onNavigate('dashboard')}
@@ -42,11 +42,29 @@ export function Header({ currentView, onNavigate, onBack, showBack }: HeaderProp
             label="Yhteenveto"
           />
           <NavButton
+            active={currentView === 'leases'}
+            onClick={() => onNavigate('leases')}
+            icon={<FileText className="w-4 h-4" />}
+            label="Sopimukset"
+          />
+          <NavButton
+            active={currentView === 'expenses'}
+            onClick={() => onNavigate('expenses')}
+            icon={<Receipt className="w-4 h-4" />}
+            label="Kulut"
+          />
+          <NavButton
+            active={currentView === 'tax'}
+            onClick={() => onNavigate('tax')}
+            icon={<Calculator className="w-4 h-4" />}
+            label="Verokoonti"
+          />
+          <NavButton
             active={currentView === 'alerts'}
             onClick={() => onNavigate('alerts')}
             icon={<Bell className="w-4 h-4" />}
-            label="Hälytykset"
-            badge={3}
+            label="Ilmoitukset"
+            badge={4}
           />
         </nav>
       </div>
@@ -70,14 +88,14 @@ function NavButton({
   return (
     <button
       onClick={onClick}
-      className={`relative flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+      className={`relative flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-sm font-medium transition-all ${
         active
           ? 'bg-blue-50 text-[#2563eb]'
           : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
       }`}
     >
       {icon}
-      <span className="hidden sm:inline">{label}</span>
+      <span className="hidden lg:inline">{label}</span>
       {badge && (
         <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
           {badge}

@@ -31,6 +31,7 @@ export function Alerts({ onSelectProperty }: AlertsProps) {
     if (diffHours < 24) return `${diffHours} tuntia sitten`;
     if (diffDays === 1) return 'Eilen';
     if (diffDays < 7) return `${diffDays} päivää sitten`;
+    if (diffDays < 365) return `${Math.floor(diffDays / 30)} kk sitten`;
     return date.toLocaleDateString('fi-FI');
   };
 
@@ -46,20 +47,26 @@ export function Alerts({ onSelectProperty }: AlertsProps) {
     info: 'bg-blue-50 text-blue-600',
   };
 
-  const typeLabels = {
+  const typeLabels: Record<string, string> = {
     listing: 'Uusi listaus',
     renewal: 'Sopimus',
     market: 'Markkina',
     recommendation: 'Suositus',
+    lease: 'Vuokrankorotus',
+    'rent-increase': 'Korotuskirje',
   };
+
+  const urgentCount = alerts.filter(a => a.severity === 'urgent').length;
+  const warningCount = alerts.filter(a => a.severity === 'warning').length;
+  const infoCount = alerts.filter(a => a.severity === 'info').length;
 
   return (
     <motion.div variants={container} initial="hidden" animate="show" exit={{ opacity: 0, y: -10 }}>
       {/* Header */}
       <motion.div variants={item} className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Hälytykset</h1>
-          <p className="text-sm text-gray-500 mt-1">Markkinamuutokset ja muistutukset</p>
+          <h1 className="text-2xl font-bold text-gray-900">Ilmoitukset</h1>
+          <p className="text-sm text-gray-500 mt-1">Sopimukset, markkinamuutokset ja muistutukset</p>
         </div>
         <button className="flex items-center gap-1.5 px-3 py-2 bg-white border border-[#e2e8f0] rounded-lg text-sm text-gray-500 hover:bg-gray-50 transition-colors">
           <Filter className="w-4 h-4" />
@@ -70,15 +77,15 @@ export function Alerts({ onSelectProperty }: AlertsProps) {
       {/* Alert Stats */}
       <motion.div variants={item} className="grid grid-cols-3 gap-3 mb-6">
         <div className="bg-white rounded-xl border border-[#e2e8f0] p-3 text-center">
-          <p className="text-2xl font-bold text-red-600">1</p>
+          <p className="text-2xl font-bold text-red-600">{urgentCount}</p>
           <p className="text-xs text-gray-400">Kiireellinen</p>
         </div>
         <div className="bg-white rounded-xl border border-[#e2e8f0] p-3 text-center">
-          <p className="text-2xl font-bold text-amber-500">3</p>
+          <p className="text-2xl font-bold text-amber-500">{warningCount}</p>
           <p className="text-xs text-gray-400">Varoituksia</p>
         </div>
         <div className="bg-white rounded-xl border border-[#e2e8f0] p-3 text-center">
-          <p className="text-2xl font-bold text-blue-500">3</p>
+          <p className="text-2xl font-bold text-blue-500">{infoCount}</p>
           <p className="text-xs text-gray-400">Tiedoksi</p>
         </div>
       </motion.div>
@@ -99,7 +106,7 @@ export function Alerts({ onSelectProperty }: AlertsProps) {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1 flex-wrap">
                   <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${severityBadge[alert.severity]}`}>
-                    {typeLabels[alert.type]}
+                    {typeLabels[alert.type] || alert.type}
                   </span>
                   <span className="text-xs text-gray-400">{formatTimestamp(alert.timestamp)}</span>
                 </div>
@@ -117,7 +124,7 @@ export function Alerts({ onSelectProperty }: AlertsProps) {
       {/* Bottom */}
       <motion.div variants={item} className="mt-6 text-center">
         <p className="text-xs text-gray-400">
-          Hälytykset perustuvat reaaliaikaiseen markkinadatan seurantaan
+          Ilmoitukset perustuvat sopimustietoihin ja reaaliaikaiseen markkinadatan seurantaan
         </p>
       </motion.div>
     </motion.div>

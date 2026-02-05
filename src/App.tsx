@@ -5,9 +5,12 @@ import { Dashboard } from './views/Dashboard';
 import { PropertyDetail } from './views/PropertyDetail';
 import { RentLetter } from './views/RentLetter';
 import { Alerts } from './views/Alerts';
+import { Leases } from './views/Leases';
+import { Expenses } from './views/Expenses';
+import { TaxSummary } from './views/TaxSummary';
 import { properties } from './data/mockData';
 
-export type View = 'dashboard' | 'property' | 'letter' | 'alerts';
+export type View = 'dashboard' | 'property' | 'letter' | 'alerts' | 'leases' | 'expenses' | 'tax';
 
 function App() {
   const [currentView, setCurrentView] = useState<View>('dashboard');
@@ -35,7 +38,7 @@ function App() {
         currentView={currentView}
         onNavigate={navigateTo}
         onBack={goBack}
-        showBack={currentView !== 'dashboard'}
+        showBack={currentView === 'property' || currentView === 'letter'}
       />
       <main className="max-w-5xl mx-auto px-4 pb-8 pt-4">
         <AnimatePresence mode="wait">
@@ -62,6 +65,21 @@ function App() {
               key="alerts"
               onSelectProperty={(id) => navigateTo('property', id)}
             />
+          )}
+          {currentView === 'leases' && (
+            <Leases
+              key="leases"
+              onSelectProperty={(id) => navigateTo('property', id)}
+            />
+          )}
+          {currentView === 'expenses' && (
+            <Expenses
+              key="expenses"
+              onSelectProperty={(id) => navigateTo('property', id)}
+            />
+          )}
+          {currentView === 'tax' && (
+            <TaxSummary key="tax" />
           )}
         </AnimatePresence>
       </main>

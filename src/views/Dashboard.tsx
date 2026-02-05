@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
-import { Building2, TrendingUp, CalendarClock, AlertTriangle, ChevronRight, Euro } from 'lucide-react';
-import { properties, getSummaryStats } from '../data/mockData';
+import { Building2, TrendingUp, CalendarClock, Euro, ChevronRight, FileText, Receipt } from 'lucide-react';
+import { properties, getSummaryStats, leases, taxSummary2025 } from '../data/mockData';
 import type { View } from '../App';
 
 const container = {
@@ -24,12 +24,15 @@ interface DashboardProps {
 export function Dashboard({ onSelectProperty, onNavigate }: DashboardProps) {
   const stats = getSummaryStats();
 
+  // Find upcoming lease actions
+  const urgentLease = leases.find(l => l.propertyId === 'kallio-1');
+
   return (
     <motion.div variants={container} initial="hidden" animate="show" exit={{ opacity: 0, y: -10 }}>
       {/* Hero Section */}
       <motion.div variants={item} className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Tervetuloa takaisin 👋</h1>
-        <p className="text-gray-500 mt-1">Tässä on vuokramarkkinan tilanne tänään.</p>
+        <p className="text-gray-500 mt-1">Hallinnoi vuokra-asuntojasi yhdestä paikasta.</p>
       </motion.div>
 
       {/* Summary Cards */}
@@ -42,44 +45,73 @@ export function Dashboard({ onSelectProperty, onNavigate }: DashboardProps) {
           subtitle="portfoliossa"
         />
         <SummaryCard
-          icon={<TrendingUp className="w-5 h-5" />}
-          iconBg="bg-red-50 text-red-500"
-          label="Keskimäärin"
-          value={`+${stats.avgDelta} €`}
-          subtitle="alle markkinahinnan"
-          highlight="danger"
+          icon={<Euro className="w-5 h-5" />}
+          iconBg="bg-emerald-50 text-emerald-500"
+          label="Vuokratulot"
+          value={`${stats.totalMonthlyRent.toLocaleString('fi-FI')} €`}
+          subtitle="kuukaudessa"
         />
         <SummaryCard
-          icon={<Euro className="w-5 h-5" />}
-          iconBg="bg-amber-50 text-amber-500"
-          label="Menetät vuodessa"
-          value={`${stats.annualLoss.toLocaleString('fi-FI')} €`}
-          subtitle="potentiaalista tuloa"
-          highlight="warning"
+          icon={<TrendingUp className="w-5 h-5" />}
+          iconBg="bg-violet-50 text-violet-500"
+          label="Nettotulo 2025"
+          value={`${taxSummary2025.netIncome.toLocaleString('fi-FI')} €`}
+          subtitle="verojen jälkeen"
         />
         <SummaryCard
           icon={<CalendarClock className="w-5 h-5" />}
-          iconBg="bg-emerald-50 text-emerald-500"
-          label="Seuraava uusinta"
-          value={`${stats.nextRenewal} pv`}
-          subtitle="Sörnäinen"
+          iconBg="bg-amber-50 text-amber-500"
+          label="Seuraava korotus"
+          value="10 pv"
+          subtitle="ilmoitusaika"
+          highlight="warning"
         />
       </motion.div>
 
       {/* Urgent Alert Banner */}
-      <motion.div variants={item}>
+      {urgentLease && (
+        <motion.div variants={item}>
+          <button
+            onClick={() => onNavigate('leases')}
+            className="w-full mb-6 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4 flex items-center gap-3 hover:shadow-md transition-shadow text-left"
+          >
+            <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center shrink-0">
+              <FileText className="w-5 h-5 text-amber-600" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-amber-900 text-sm">Vuokrankorotus: {urgentLease.propertyAddress}</p>
+              <p className="text-amber-700 text-xs mt-0.5">Ilmoitus vuokralaiselle lähetettävä viimeistään 15.2.2026 →</p>
+            </div>
+            <ChevronRight className="w-5 h-5 text-amber-400 shrink-0" />
+          </button>
+        </motion.div>
+      )}
+
+      {/* Quick Actions */}
+      <motion.div variants={item} className="grid grid-cols-2 gap-3 mb-6">
         <button
-          onClick={() => onNavigate('alerts')}
-          className="w-full mb-6 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4 flex items-center gap-3 hover:shadow-md transition-shadow text-left"
+          onClick={() => onNavigate('expenses')}
+          className="bg-white rounded-xl border border-[#e2e8f0] p-4 flex items-center gap-3 hover:shadow-md hover:border-blue-200 transition-all text-left"
         >
-          <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center shrink-0">
-            <AlertTriangle className="w-5 h-5 text-amber-600" />
+          <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center shrink-0">
+            <Receipt className="w-5 h-5 text-[#2563eb]" />
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="font-semibold text-amber-900 text-sm">Sörnäisten vuokrasopimus päättyy 34 päivän kuluttua</p>
-            <p className="text-amber-700 text-xs mt-0.5">Markkinahinta on 140 €/kk nykyistä vuokraa korkeampi →</p>
+          <div>
+            <p className="font-semibold text-gray-900 text-sm">Lisää kuitti</p>
+            <p className="text-xs text-gray-400">Tallenna kulu</p>
           </div>
-          <ChevronRight className="w-5 h-5 text-amber-400 shrink-0" />
+        </button>
+        <button
+          onClick={() => onNavigate('leases')}
+          className="bg-white rounded-xl border border-[#e2e8f0] p-4 flex items-center gap-3 hover:shadow-md hover:border-blue-200 transition-all text-left"
+        >
+          <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center shrink-0">
+            <FileText className="w-5 h-5 text-[#2563eb]" />
+          </div>
+          <div>
+            <p className="font-semibold text-gray-900 text-sm">Sopimukset</p>
+            <p className="text-xs text-gray-400">Hallinnoi vuokrasopimuksia</p>
+          </div>
         </button>
       </motion.div>
 
@@ -119,8 +151,8 @@ export function Dashboard({ onSelectProperty, onNavigate }: DashboardProps) {
                 <p className="text-sm text-gray-500 truncate">{property.address}</p>
                 <div className="flex items-center gap-3 mt-1.5">
                   <span className="text-sm font-medium text-gray-900">{property.currentRent} €/kk</span>
-                  <span className="text-xs text-gray-400">→</span>
-                  <span className="text-sm font-medium text-blue-600">{property.marketEstimate} €/kk</span>
+                  <span className="text-xs text-gray-400">·</span>
+                  <span className="text-sm text-gray-500">{property.tenantName}</span>
                 </div>
               </div>
 
@@ -135,11 +167,6 @@ export function Dashboard({ onSelectProperty, onNavigate }: DashboardProps) {
                 <span className={`text-xs mt-1 ${isUnderpriced ? 'text-red-400' : 'text-green-400'}`}>
                   {deltaPercent}% {isUnderpriced ? 'alle' : 'yli'}
                 </span>
-                {property.leaseRenewalDays <= 60 && (
-                  <span className="text-[10px] text-amber-500 font-medium mt-1">
-                    ⏰ {property.leaseRenewalDays} pv
-                  </span>
-                )}
               </div>
 
               <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-blue-400 transition-colors shrink-0" />
