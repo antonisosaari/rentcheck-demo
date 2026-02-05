@@ -136,8 +136,8 @@ export function Dashboard({ onSelectProperty, onNavigate }: DashboardProps) {
       {/* Alert Card */}
       <motion.div variants={item}>
         <button
-          onClick={() => onNavigate('management')}
-          className="w-full glass-red rounded-2xl p-4 mb-6 flex items-center gap-3 text-left transition-all duration-300 hover:bg-white/[0.08] shadow-lg shadow-black/20"
+          onClick={() => onNavigate('more')}
+          className="w-full glass-red rounded-2xl p-4 mb-4 flex items-center gap-3 text-left transition-all duration-300 hover:bg-white/[0.08] shadow-lg shadow-black/20"
         >
           <span className="text-xl shrink-0">⚠️</span>
           <div className="flex-1 min-w-0">
@@ -145,6 +145,30 @@ export function Dashboard({ onSelectProperty, onNavigate }: DashboardProps) {
             <p className="text-xs text-slate-400 mt-0.5">Ilmoita vuokralaiselle viim. 15.2.2026</p>
           </div>
           <ChevronRight className="w-4 h-4 text-slate-500 shrink-0" />
+        </button>
+      </motion.div>
+
+      {/* Välitys Card */}
+      <motion.div variants={item}>
+        <button
+          onClick={() => onNavigate('valitys')}
+          className="w-full glass rounded-2xl p-4 mb-6 text-left transition-all duration-300 hover:bg-white/[0.08] shadow-lg shadow-black/20 border border-green-400/10"
+        >
+          <div className="flex items-center gap-3 mb-3">
+            <span className="text-xl shrink-0">📢</span>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-slate-100 text-sm">Välitys: Fleminginkatu 15 B</p>
+              <p className="text-xs text-slate-400 mt-0.5">5 hakijaa · 2 näyttöä sovittu · Julkaistu 3 pv sitten</p>
+            </div>
+            <ChevronRight className="w-4 h-4 text-slate-500 shrink-0" />
+          </div>
+          {/* Pipeline Progress */}
+          <div className="flex items-center gap-1">
+            <div className="flex-1 h-1.5 bg-green-500/30 rounded-full overflow-hidden">
+              <div className="h-full bg-green-500 rounded-full" style={{ width: '40%' }} />
+            </div>
+            <span className="text-[10px] text-green-400 font-medium ml-2 shrink-0">Yhteydenotot</span>
+          </div>
         </button>
       </motion.div>
 

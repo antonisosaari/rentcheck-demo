@@ -4,13 +4,12 @@ import { BottomNav } from './components/BottomNav';
 import { Dashboard } from './views/Dashboard';
 import { PropertyDetail } from './views/PropertyDetail';
 import { RentLetter } from './views/RentLetter';
-import { Alerts } from './views/Alerts';
 import { Messages } from './views/Messages';
-import { Services } from './views/Services';
-import { Management } from './views/Management';
+import { Valitys } from './views/Valitys';
+import { MoreView } from './views/MoreView';
 import { properties } from './data/mockData';
 
-export type View = 'dashboard' | 'property' | 'letter' | 'alerts' | 'leases' | 'expenses' | 'tax' | 'messages' | 'services' | 'management';
+export type View = 'dashboard' | 'property' | 'letter' | 'alerts' | 'leases' | 'expenses' | 'tax' | 'messages' | 'services' | 'management' | 'valitys' | 'more';
 
 function App() {
   const [currentView, setCurrentView] = useState<View>('dashboard');
@@ -55,22 +54,17 @@ function App() {
               onBack={goBack}
             />
           )}
-          {currentView === 'alerts' && (
-            <Alerts
-              key="alerts"
-              onSelectProperty={(id) => navigateTo('property', id)}
-            />
-          )}
           {currentView === 'messages' && (
             <Messages key="messages" />
           )}
-          {currentView === 'services' && (
-            <Services key="services" />
+          {currentView === 'valitys' && (
+            <Valitys key="valitys" />
           )}
-          {currentView === 'management' && (
-            <Management
-              key="management"
+          {currentView === 'more' && (
+            <MoreView
+              key="more"
               onSelectProperty={(id) => navigateTo('property', id)}
+              onNavigate={navigateTo}
             />
           )}
         </AnimatePresence>

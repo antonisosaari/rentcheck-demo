@@ -8,20 +8,19 @@ interface BottomNavProps {
 
 const tabs: { view: View; icon: string; label: string }[] = [
   { view: 'dashboard', icon: '🏠', label: 'Koti' },
-  { view: 'dashboard', icon: '🏘️', label: 'Asunnot' }, // Navigates to dashboard (property list)
+  { view: 'dashboard', icon: '🏘️', label: 'Asunnot' },
+  { view: 'valitys', icon: '📢', label: 'Välitys' },
   { view: 'messages', icon: '💬', label: 'Viestit' },
-  { view: 'services', icon: '🎁', label: 'Palvelut' },
-  { view: 'management', icon: '📊', label: 'Hallinta' },
+  { view: 'more', icon: '⚙️', label: 'Lisää' },
 ];
 
 export function BottomNav({ currentView, onNavigate }: BottomNavProps) {
-  // Map views to active tab indices
   const getActiveIndex = () => {
     if (currentView === 'dashboard') return 0;
-    if (['property', 'letter', 'alerts'].includes(currentView)) return 1;
-    if (currentView === 'messages') return 2;
-    if (currentView === 'services') return 3;
-    if (['management', 'leases', 'expenses', 'tax'].includes(currentView)) return 4;
+    if (['property', 'letter'].includes(currentView)) return 1;
+    if (currentView === 'valitys') return 2;
+    if (currentView === 'messages') return 3;
+    if (['more', 'services', 'management', 'alerts', 'leases', 'expenses', 'tax'].includes(currentView)) return 4;
     return 0;
   };
 
@@ -38,7 +37,6 @@ export function BottomNav({ currentView, onNavigate }: BottomNavProps) {
                 key={`${tab.label}-${index}`}
                 onClick={() => {
                   if (index === 1) {
-                    // "Asunnot" tab goes to dashboard with property list
                     onNavigate('dashboard');
                   } else {
                     onNavigate(tab.view);
