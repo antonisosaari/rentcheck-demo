@@ -17,19 +17,20 @@ const item = {
 
 interface Conversation {
   id: string;
-  tenantName: string;
+  personName: string;
   propertyName: string;
   neighborhood: string;
   avatar: string;
   lastMessage: string;
   lastMessageTime: string;
   unread: number;
+  type: 'tenant' | 'candidate';
   messages: Message[];
 }
 
 interface Message {
   id: string;
-  sender: 'tenant' | 'landlord';
+  sender: 'them' | 'landlord';
   text: string;
   time: string;
 }
@@ -37,80 +38,79 @@ interface Message {
 const conversations: Conversation[] = [
   {
     id: 'conv-1',
-    tenantName: 'Matti Virtanen',
+    personName: 'Matti Virtanen',
     propertyName: 'Fleminginkatu 15 B 23',
     neighborhood: 'Kallio',
     avatar: 'M',
     lastMessage: 'Sopii hyvin, kiitos nopeasta reagoinnista! 👍',
     lastMessageTime: '1 pv sitten',
     unread: 0,
+    type: 'tenant',
     messages: [
-      {
-        id: 'm1',
-        sender: 'tenant',
-        text: 'Hei, kylpyhuoneen hana vuotaa hieman. Voisikohan sen korjauttaa?',
-        time: '3.2.2026 klo 14:22',
-      },
-      {
-        id: 'm2',
-        sender: 'landlord',
-        text: 'Kiitos ilmoituksesta! Olen tilannut putkimiehen, tulee torstaina klo 10-12. Sopiiko?',
-        time: '4.2.2026 klo 09:15',
-      },
-      {
-        id: 'm3',
-        sender: 'tenant',
-        text: 'Sopii hyvin, kiitos nopeasta reagoinnista! 👍',
-        time: '4.2.2026 klo 10:03',
-      },
+      { id: 'm1', sender: 'them', text: 'Hei, kylpyhuoneen hana vuotaa hieman. Voisikohan sen korjauttaa?', time: '3.2.2026 klo 14:22' },
+      { id: 'm2', sender: 'landlord', text: 'Kiitos ilmoituksesta! Olen tilannut putkimiehen, tulee torstaina klo 10-12. Sopiiko?', time: '4.2.2026 klo 09:15' },
+      { id: 'm3', sender: 'them', text: 'Sopii hyvin, kiitos nopeasta reagoinnista! 👍', time: '4.2.2026 klo 10:03' },
+    ],
+  },
+  {
+    id: 'conv-petra',
+    personName: 'Petra Nieminen',
+    propertyName: 'Fleminginkatu 15 B 23',
+    neighborhood: 'Kallio',
+    avatar: 'P',
+    lastMessage: 'Hei! Olen muuttamassa Helsinkiin työn perässä. Rauhallinen ja luotettava.',
+    lastMessageTime: '2 h sitten',
+    unread: 1,
+    type: 'candidate',
+    messages: [
+      { id: 'mp1', sender: 'them', text: 'Hei! Olen muuttamassa Helsinkiin työn perässä. Olen rauhallinen ja luotettava vuokralainen. Olisiko mahdollista sopia näyttö?', time: '5.2.2026 klo 12:30' },
     ],
   },
   {
     id: 'conv-2',
-    tenantName: 'Anna Korhonen',
+    personName: 'Anna Korhonen',
     propertyName: 'Hämeentie 42 A 8',
     neighborhood: 'Sörnäinen',
     avatar: 'A',
     lastMessage: 'Toki, kunhan käytät mattamaalia. Kiva kun pidät asunnosta huolta!',
     lastMessageTime: '5 pv sitten',
     unread: 0,
+    type: 'tenant',
     messages: [
-      {
-        id: 'm4',
-        sender: 'tenant',
-        text: 'Moi! Onko ok jos maalaan makuuhuoneen seinän vaaleanharmaksi?',
-        time: '29.1.2026 klo 18:45',
-      },
-      {
-        id: 'm5',
-        sender: 'landlord',
-        text: 'Toki, kunhan käytät mattamaalia. Kiva kun pidät asunnosta huolta!',
-        time: '31.1.2026 klo 11:20',
-      },
+      { id: 'm4', sender: 'them', text: 'Moi! Onko ok jos maalaan makuuhuoneen seinän vaaleanharmaksi?', time: '29.1.2026 klo 18:45' },
+      { id: 'm5', sender: 'landlord', text: 'Toki, kunhan käytät mattamaalia. Kiva kun pidät asunnosta huolta!', time: '31.1.2026 klo 11:20' },
     ],
   },
   {
     id: 'conv-3',
-    tenantName: 'Juha Mäkinen',
+    personName: 'Juha Mäkinen',
     propertyName: 'Nilsiänkatu 8 C 12',
     neighborhood: 'Vallila',
     avatar: 'J',
     lastMessage: 'Selvä, kiitos tiedosta!',
     lastMessageTime: '2 vk sitten',
     unread: 0,
+    type: 'tenant',
     messages: [
-      {
-        id: 'm6',
-        sender: 'landlord',
-        text: 'Hei Juha! Taloyhtiö tekee julkisivuremonttia 10.-14.2. Ikkunoita ei voi avata sinä aikana.',
-        time: '22.1.2026 klo 10:00',
-      },
-      {
-        id: 'm7',
-        sender: 'tenant',
-        text: 'Selvä, kiitos tiedosta!',
-        time: '22.1.2026 klo 12:34',
-      },
+      { id: 'm6', sender: 'landlord', text: 'Hei Juha! Taloyhtiö tekee julkisivuremonttia 10.-14.2. Ikkunoita ei voi avata sinä aikana.', time: '22.1.2026 klo 10:00' },
+      { id: 'm7', sender: 'them', text: 'Selvä, kiitos tiedosta!', time: '22.1.2026 klo 12:34' },
+    ],
+  },
+  {
+    id: 'conv-juha-c',
+    personName: 'Juha Mäkinen (hakija)',
+    propertyName: 'Fleminginkatu 15 B 23',
+    neighborhood: 'Kallio',
+    avatar: 'J',
+    lastMessage: 'Näyttö sovittu 15.3. klo 17:00. Nähdään!',
+    lastMessageTime: '3 pv sitten',
+    unread: 0,
+    type: 'candidate',
+    messages: [
+      { id: 'mc1', sender: 'them', text: 'Terve, olisimme kiinnostuneita asunnosta. Meillä on 5-vuotias lapsi ja kissa.', time: '1.2.2026 klo 09:00' },
+      { id: 'mc2', sender: 'landlord', text: 'Hei! Kiitos kiinnostuksesta. Sopiiko näyttö la 15.3. klo 17:00?', time: '1.2.2026 klo 14:00' },
+      { id: 'mc3', sender: 'them', text: 'Sopii mainiosti! Nähdään silloin.', time: '2.2.2026 klo 08:15' },
+      { id: 'mc4', sender: 'landlord', text: 'Näyttö sovittu 15.3. klo 17:00. Nähdään!', time: '2.2.2026 klo 10:30' },
     ],
   },
 ];
@@ -120,6 +120,7 @@ export function Messages() {
   const [inputText, setInputText] = useState('');
 
   const activeConv = conversations.find((c) => c.id === selectedConv);
+  const totalUnread = conversations.reduce((sum, c) => sum + c.unread, 0);
 
   return (
     <AnimatePresence mode="wait">
@@ -127,6 +128,7 @@ export function Messages() {
         <ConversationList
           key="list"
           conversations={conversations}
+          totalUnread={totalUnread}
           onSelect={setSelectedConv}
         />
       ) : (
@@ -146,9 +148,11 @@ export function Messages() {
 
 function ConversationList({
   conversations,
+  totalUnread,
   onSelect,
 }: {
   conversations: Conversation[];
+  totalUnread: number;
   onSelect: (id: string) => void;
 }) {
   return (
@@ -160,23 +164,15 @@ function ConversationList({
     >
       {/* Header */}
       <motion.div variants={item} className="mb-6">
-        <h1 className="text-xl font-bold text-slate-100">Viestit</h1>
-        <p className="text-xs text-slate-500 mt-1">Vuokralaiskommunikaatio</p>
-      </motion.div>
-
-      {/* Summary */}
-      <motion.div variants={item} className="glass-green rounded-2xl p-4 mb-5 shadow-lg shadow-black/20">
-        <div className="flex items-center gap-3">
-          <span className="text-2xl">💬</span>
-          <div>
-            <p className="text-sm font-semibold text-green-400">
-              {conversations.length} keskustelua
-            </p>
-            <p className="text-xs text-slate-500">
-              Kaikki vuokralaiset tavoitettavissa
-            </p>
-          </div>
+        <div className="flex items-center gap-2">
+          <h1 className="text-xl font-bold text-slate-100">Viestit</h1>
+          {totalUnread > 0 && (
+            <span className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+              <span className="text-[10px] font-bold text-black">{totalUnread}</span>
+            </span>
+          )}
         </div>
+        <p className="text-xs text-slate-500 mt-1">Vuokralaiset ja hakijat</p>
       </motion.div>
 
       {/* Conversation List */}
@@ -190,8 +186,14 @@ function ConversationList({
             className="w-full glass rounded-2xl p-4 flex items-center gap-3 text-left transition-all duration-300 hover:bg-white/[0.08] shadow-lg shadow-black/20"
           >
             {/* Avatar */}
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-500/30 to-green-600/15 border border-green-500/20 flex items-center justify-center shrink-0">
-              <span className="text-green-400 font-bold text-lg">
+            <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 ${
+              conv.type === 'candidate'
+                ? 'bg-gradient-to-br from-blue-500/30 to-blue-600/15 border border-blue-500/20'
+                : 'bg-gradient-to-br from-green-500/30 to-green-600/15 border border-green-500/20'
+            }`}>
+              <span className={`font-bold text-lg ${
+                conv.type === 'candidate' ? 'text-blue-400' : 'text-green-400'
+              }`}>
                 {conv.avatar}
               </span>
             </div>
@@ -199,9 +201,16 @@ function ConversationList({
             {/* Info */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between mb-0.5">
-                <h3 className="font-semibold text-slate-100 text-sm truncate">
-                  {conv.tenantName}
-                </h3>
+                <div className="flex items-center gap-2 min-w-0">
+                  <h3 className="font-semibold text-slate-100 text-sm truncate">
+                    {conv.personName}
+                  </h3>
+                  {conv.type === 'candidate' && (
+                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-blue-400/10 text-blue-400 border border-blue-400/20 font-medium shrink-0">
+                      Hakija
+                    </span>
+                  )}
+                </div>
                 <span className="text-[10px] text-slate-600 shrink-0 ml-2">
                   {conv.lastMessageTime}
                 </span>
@@ -262,15 +271,28 @@ function ChatView({
         >
           <ArrowLeft className="w-5 h-5 text-slate-400" />
         </button>
-        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-500/30 to-green-600/15 border border-green-500/20 flex items-center justify-center shrink-0">
-          <span className="text-green-400 font-bold">
+        <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
+          conversation.type === 'candidate'
+            ? 'bg-gradient-to-br from-blue-500/30 to-blue-600/15 border border-blue-500/20'
+            : 'bg-gradient-to-br from-green-500/30 to-green-600/15 border border-green-500/20'
+        }`}>
+          <span className={`font-bold ${
+            conversation.type === 'candidate' ? 'text-blue-400' : 'text-green-400'
+          }`}>
             {conversation.avatar}
           </span>
         </div>
         <div className="flex-1 min-w-0">
-          <h2 className="font-semibold text-slate-100 text-sm">
-            {conversation.tenantName}
-          </h2>
+          <div className="flex items-center gap-2">
+            <h2 className="font-semibold text-slate-100 text-sm">
+              {conversation.personName}
+            </h2>
+            {conversation.type === 'candidate' && (
+              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-blue-400/10 text-blue-400 border border-blue-400/20 font-medium">
+                Hakija
+              </span>
+            )}
+          </div>
           <p className="text-[10px] text-slate-500">
             {conversation.neighborhood} · {conversation.propertyName}
           </p>
