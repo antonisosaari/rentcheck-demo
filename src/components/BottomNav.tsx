@@ -8,27 +8,37 @@ interface BottomNavProps {
 
 const tabs: { view: View; icon: string; label: string }[] = [
   { view: 'dashboard', icon: '🏠', label: 'Koti' },
-  { view: 'property', icon: '🏘️', label: 'Asunnot' },
-  { view: 'leases', icon: '📋', label: 'Sopimukset' },
-  { view: 'expenses', icon: '🧾', label: 'Kulut' },
-  { view: 'tax', icon: '📊', label: 'Vero' },
+  { view: 'dashboard', icon: '🏘️', label: 'Asunnot' }, // Navigates to dashboard (property list)
+  { view: 'messages', icon: '💬', label: 'Viestit' },
+  { view: 'services', icon: '🎁', label: 'Palvelut' },
+  { view: 'management', icon: '📊', label: 'Hallinta' },
 ];
 
 export function BottomNav({ currentView, onNavigate }: BottomNavProps) {
-  // Map property-related views to the "Asunnot" tab
-  const activeView = ['property', 'letter', 'alerts'].includes(currentView) ? 'property' : currentView;
+  // Map views to active tab indices
+  const getActiveIndex = () => {
+    if (currentView === 'dashboard') return 0;
+    if (['property', 'letter', 'alerts'].includes(currentView)) return 1;
+    if (currentView === 'messages') return 2;
+    if (currentView === 'services') return 3;
+    if (['management', 'leases', 'expenses', 'tax'].includes(currentView)) return 4;
+    return 0;
+  };
+
+  const activeIndex = getActiveIndex();
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50">
       <div className="max-w-md mx-auto px-2 pb-[env(safe-area-inset-bottom)]">
         <div className="glass rounded-2xl mb-2 mx-1 px-1 py-1 flex items-center justify-around shadow-lg shadow-black/40">
-          {tabs.map((tab) => {
-            const isActive = activeView === tab.view;
+          {tabs.map((tab, index) => {
+            const isActive = activeIndex === index;
             return (
               <button
-                key={tab.view}
+                key={`${tab.label}-${index}`}
                 onClick={() => {
-                  if (tab.view === 'property') {
+                  if (index === 1) {
+                    // "Asunnot" tab goes to dashboard with property list
                     onNavigate('dashboard');
                   } else {
                     onNavigate(tab.view);

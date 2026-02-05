@@ -5,12 +5,12 @@ import { Dashboard } from './views/Dashboard';
 import { PropertyDetail } from './views/PropertyDetail';
 import { RentLetter } from './views/RentLetter';
 import { Alerts } from './views/Alerts';
-import { Leases } from './views/Leases';
-import { Expenses } from './views/Expenses';
-import { TaxSummary } from './views/TaxSummary';
+import { Messages } from './views/Messages';
+import { Services } from './views/Services';
+import { Management } from './views/Management';
 import { properties } from './data/mockData';
 
-export type View = 'dashboard' | 'property' | 'letter' | 'alerts' | 'leases' | 'expenses' | 'tax';
+export type View = 'dashboard' | 'property' | 'letter' | 'alerts' | 'leases' | 'expenses' | 'tax' | 'messages' | 'services' | 'management';
 
 function App() {
   const [currentView, setCurrentView] = useState<View>('dashboard');
@@ -45,6 +45,7 @@ function App() {
               property={selectedProperty}
               onGenerateLetter={() => navigateTo('letter')}
               onBack={goBack}
+              onNavigate={navigateTo}
             />
           )}
           {currentView === 'letter' && selectedProperty && (
@@ -60,20 +61,17 @@ function App() {
               onSelectProperty={(id) => navigateTo('property', id)}
             />
           )}
-          {currentView === 'leases' && (
-            <Leases
-              key="leases"
+          {currentView === 'messages' && (
+            <Messages key="messages" />
+          )}
+          {currentView === 'services' && (
+            <Services key="services" />
+          )}
+          {currentView === 'management' && (
+            <Management
+              key="management"
               onSelectProperty={(id) => navigateTo('property', id)}
             />
-          )}
-          {currentView === 'expenses' && (
-            <Expenses
-              key="expenses"
-              onSelectProperty={(id) => navigateTo('property', id)}
-            />
-          )}
-          {currentView === 'tax' && (
-            <TaxSummary key="tax" />
           )}
         </AnimatePresence>
       </main>

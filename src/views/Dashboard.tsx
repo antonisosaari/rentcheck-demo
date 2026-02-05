@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Heart, MessageCircle, Gift } from 'lucide-react';
 import { properties, getSummaryStats, taxSummary2025 } from '../data/mockData';
 import type { View } from '../App';
 
@@ -62,10 +62,81 @@ export function Dashboard({ onSelectProperty, onNavigate }: DashboardProps) {
         </div>
       </motion.div>
 
+      {/* Tenant Relationship Health Card */}
+      <motion.div variants={item}>
+        <button
+          onClick={() => onNavigate('messages')}
+          className="w-full glass rounded-2xl p-5 mb-4 text-left transition-all duration-300 hover:bg-white/[0.08] shadow-lg shadow-black/20 border border-green-400/10"
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <Heart className="w-4 h-4 text-green-400" />
+            <h3 className="text-sm font-semibold text-slate-100">Vuokralaissuhteet</h3>
+          </div>
+          <div className="grid grid-cols-3 gap-3 mb-3">
+            <div className="text-center">
+              <p className="text-lg font-bold text-green-400">3/3</p>
+              <p className="text-[10px] text-slate-500">tyytyväisiä ✅</p>
+            </div>
+            <div className="text-center">
+              <p className="text-lg font-bold text-amber-400">1</p>
+              <p className="text-[10px] text-slate-500">korjauspyyntö</p>
+            </div>
+            <div className="text-center">
+              <p className="text-lg font-bold text-blue-400">15.4.</p>
+              <p className="text-[10px] text-slate-500">seur. muistutus</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="flex -space-x-2">
+              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-green-500/40 to-green-600/20 border border-green-500/30 flex items-center justify-center">
+                <span className="text-[9px] font-bold text-green-400">M</span>
+              </div>
+              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-green-500/40 to-green-600/20 border border-green-500/30 flex items-center justify-center">
+                <span className="text-[9px] font-bold text-green-400">A</span>
+              </div>
+              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-green-500/40 to-green-600/20 border border-green-500/30 flex items-center justify-center">
+                <span className="text-[9px] font-bold text-green-400">J</span>
+              </div>
+            </div>
+            <span className="text-[10px] text-slate-500">Kaikki vuokralaiset tavoitettavissa</span>
+            <ChevronRight className="w-3 h-3 text-slate-600 ml-auto" />
+          </div>
+        </button>
+      </motion.div>
+
+      {/* Smart Tip Card */}
+      <motion.div variants={item} className="glass-green rounded-2xl p-4 mb-4 shadow-lg shadow-black/20">
+        <div className="flex items-start gap-3">
+          <span className="text-lg shrink-0">💡</span>
+          <div>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              <span className="text-green-400 font-semibold">Vinkki:</span>{' '}
+              Matin vuokrasuhde täyttää 2 vuotta ensi kuussa. Harkitse kiitosviesti tai pieni lahja — pitkäaikainen vuokralainen on arvokkain.
+            </p>
+            <div className="flex gap-2 mt-3">
+              <button
+                onClick={() => onNavigate('messages')}
+                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-medium text-green-400 bg-green-400/10 hover:bg-green-400/15 transition-all duration-300"
+              >
+                <MessageCircle className="w-3 h-3" />
+                Lähetä viesti
+              </button>
+              <button
+                onClick={() => onNavigate('services')}
+                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-medium text-slate-400 bg-white/5 hover:bg-white/[0.08] transition-all duration-300"
+              >
+                <Gift className="w-3 h-3" />
+                Tilaa lahja
+              </button>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
       {/* Alert Card */}
       <motion.div variants={item}>
         <button
-          onClick={() => onNavigate('leases')}
+          onClick={() => onNavigate('management')}
           className="w-full glass-red rounded-2xl p-4 mb-6 flex items-center gap-3 text-left transition-all duration-300 hover:bg-white/[0.08] shadow-lg shadow-black/20"
         >
           <span className="text-xl shrink-0">⚠️</span>

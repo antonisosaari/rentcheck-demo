@@ -4,9 +4,10 @@ import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
   CartesianGrid,
 } from 'recharts';
-import { ArrowLeft, MapPin, FileText, ExternalLink, Calendar, User, Receipt, Euro, CheckCircle, Clock } from 'lucide-react';
+import { ArrowLeft, MapPin, FileText, ExternalLink, Calendar, User, Receipt, Euro, CheckCircle, Clock, MessageCircle, Gift, Star, Heart } from 'lucide-react';
 import type { Property } from '../data/mockData';
 import { leases, expenses } from '../data/mockData';
+import type { View } from '../App';
 
 const container = {
   hidden: { opacity: 0 },
@@ -25,11 +26,59 @@ interface PropertyDetailProps {
   property: Property;
   onGenerateLetter: () => void;
   onBack: () => void;
+  onNavigate: (view: View) => void;
 }
 
-type Tab = 'market' | 'sopimus' | 'kulut';
+type Tab = 'market' | 'vuokralainen' | 'sopimus' | 'kulut';
 
-export function PropertyDetail({ property, onGenerateLetter, onBack }: PropertyDetailProps) {
+// Tenant relationship data (mock)
+const tenantRelationshipData: Record<string, {
+  phone: string;
+  email: string;
+  moveIn: string;
+  duration: string;
+  satisfaction: number;
+  lastMessage: string;
+  lastMessageDate: string;
+  lastService: string;
+  lastServiceDate: string;
+}> = {
+  'kallio-1': {
+    phone: '+358 40 123 4567',
+    email: 'matti.virtanen@email.fi',
+    moveIn: '15.4.2024',
+    duration: '1v 10kk',
+    satisfaction: 5,
+    lastMessage: 'Sopii hyvin, kiitos nopeasta reagoinnista! 👍',
+    lastMessageDate: '4.2.2026',
+    lastService: 'Joululahja lähetetty',
+    lastServiceDate: '18.12.2025',
+  },
+  'sornainen-1': {
+    phone: '+358 50 234 5678',
+    email: 'anna.korhonen@email.fi',
+    moveIn: '1.6.2022',
+    duration: '3v 8kk',
+    satisfaction: 5,
+    lastMessage: 'Toki, kunhan käytät mattamaalia.',
+    lastMessageDate: '31.1.2026',
+    lastService: 'Pistorasian vaihto',
+    lastServiceDate: '12.12.2025',
+  },
+  'vallila-1': {
+    phone: '+358 45 345 6789',
+    email: 'juha.makinen@email.fi',
+    moveIn: '1.9.2024',
+    duration: '1v 5kk',
+    satisfaction: 4,
+    lastMessage: 'Selvä, kiitos tiedosta!',
+    lastMessageDate: '22.1.2026',
+    lastService: 'Ovenkahvan vaihto',
+    lastServiceDate: '28.11.2025',
+  },
+};
+
+export function PropertyDetail({ property, onGenerateLetter, onBack, onNavigate }: PropertyDetailProps) {
   const [activeTab, setActiveTab] = useState<Tab>('market');
   
   const delta = property.marketEstimate - property.currentRent;
@@ -38,6 +87,7 @@ export function PropertyDetail({ property, onGenerateLetter, onBack }: PropertyD
   const lease = leases.find(l => l.propertyId === property.id);
   const propertyExpenses = expenses.filter(e => e.propertyId === property.id);
   const totalExpenses = propertyExpenses.reduce((sum, e) => sum + e.amount, 0);
+  const tenantData = tenantRelationshipData[property.id];
 
   return (
     <motion.div variants={container} initial="hidden" animate="show" exit={{ opacity: 0, y: -10 }}>
@@ -89,6 +139,7 @@ export function PropertyDetail({ property, onGenerateLetter, onBack }: PropertyD
       {/* Tabs */}
       <motion.div variants={item} className="glass rounded-2xl p-1 flex gap-1 mb-5 shadow-lg shadow-black/20">
         <TabButton active={activeTab === 'market'} onClick={() => setActiveTab('market')} label="Markkina" />
+        <TabButton active={activeTab === 'vuokralainen'} onClick={() => setActiveTab('vuokralainen')} label="Vuokralainen" />
         <TabButton active={activeTab === 'sopimus'} onClick={() => setActiveTab('sopimus')} label="Sopimus" />
         <TabButton active={activeTab === 'kulut'} onClick={() => setActiveTab('kulut')} label="Kulut" badge={propertyExpenses.length} />
       </motion.div>
@@ -96,6 +147,9 @@ export function PropertyDetail({ property, onGenerateLetter, onBack }: PropertyD
       {/* Tab Content */}
       {activeTab === 'market' && (
         <MarketTab property={property} delta={delta} deltaPercent={deltaPercent} onGenerateLetter={onGenerateLetter} />
+      )}
+      {activeTab === 'vuokralainen' && tenantData && (
+        <TenantTab property={property} tenantData={tenantData} onNavigate={onNavigate} />
       )}
       {activeTab === 'sopimus' && lease && (
         <LeaseTab lease={lease} />
@@ -111,7 +165,7 @@ function TabButton({ active, onClick, label, badge }: { active: boolean; onClick
   return (
     <button
       onClick={onClick}
-      className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
+      className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-2.5 rounded-xl text-xs font-medium transition-all duration-300 ${
         active ? 'bg-green-400/15 text-green-400' : 'text-slate-500 hover:text-slate-300'
       }`}
     >
@@ -124,6 +178,120 @@ function TabButton({ active, onClick, label, badge }: { active: boolean; onClick
         </span>
       )}
     </button>
+  );
+}
+
+/* ═══════════════════ TENANT TAB ═══════════════════ */
+
+function TenantTab({ property, tenantData, onNavigate }: {
+  property: Property;
+  tenantData: typeof tenantRelationshipData[string];
+  onNavigate: (view: View) => void;
+}) {
+  const stars = Array.from({ length: 5 }, (_, i) => i < tenantData.satisfaction);
+
+  return (
+    <>
+      {/* Tenant Profile Card */}
+      <motion.div variants={item} initial="hidden" animate="show" className="glass rounded-2xl p-5 mb-4 shadow-lg shadow-black/20">
+        <div className="flex items-center gap-4 mb-4">
+          <div className="w-14 h-14 rounded-full bg-gradient-to-br from-green-500/30 to-green-600/15 border border-green-500/20 flex items-center justify-center">
+            <span className="text-green-400 font-bold text-xl">{property.tenantName[0]}</span>
+          </div>
+          <div>
+            <h3 className="text-base font-bold text-slate-100">{property.tenantName}</h3>
+            <p className="text-xs text-slate-500">{property.neighborhood} · {property.address}</p>
+          </div>
+        </div>
+        
+        <div className="space-y-3">
+          <InfoRow label="Puhelinnumero" value={tenantData.phone} />
+          <InfoRow label="Sähköposti" value={tenantData.email} />
+          <InfoRow label="Muuttopäivä" value={tenantData.moveIn} />
+        </div>
+      </motion.div>
+
+      {/* Relationship Timeline */}
+      <motion.div variants={item} initial="hidden" animate="show" className="glass-green rounded-2xl p-5 mb-4 shadow-lg shadow-black/20">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <Heart className="w-4 h-4 text-green-400" />
+            <h3 className="text-sm font-semibold text-slate-100">Vuokrasuhde</h3>
+          </div>
+          <span className="text-lg font-bold text-green-400">{tenantData.duration}</span>
+        </div>
+        
+        {/* Satisfaction */}
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-xs text-slate-500">Tyytyväisyys:</span>
+          <div className="flex gap-0.5">
+            {stars.map((filled, i) => (
+              <Star key={i} className={`w-4 h-4 ${filled ? 'text-amber-400 fill-amber-400' : 'text-slate-700'}`} />
+            ))}
+          </div>
+        </div>
+
+        {/* Timeline bar */}
+        <div className="relative h-2 bg-white/5 rounded-full overflow-hidden">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: '85%' }}
+            transition={{ duration: 1, ease: 'easeOut', delay: 0.3 }}
+            className="h-full bg-gradient-to-r from-green-400 to-green-500 rounded-full"
+          />
+        </div>
+        <p className="text-[10px] text-slate-600 mt-1">
+          Pitkäaikainen vuokralainen — arvokas suhde
+        </p>
+      </motion.div>
+
+      {/* Recent Interactions */}
+      <motion.div variants={item} initial="hidden" animate="show" className="glass rounded-2xl p-5 mb-4 shadow-lg shadow-black/20">
+        <h3 className="text-sm font-semibold text-slate-100 mb-4">Viimeaikaiset tapahtumat</h3>
+        
+        <div className="space-y-3">
+          <div className="flex items-start gap-3 p-3 rounded-xl bg-white/[0.03]">
+            <div className="w-8 h-8 rounded-lg bg-green-400/10 flex items-center justify-center shrink-0">
+              <MessageCircle className="w-4 h-4 text-green-400" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-medium text-slate-200">Viimeisin viesti</p>
+              <p className="text-[10px] text-slate-500 mt-0.5 truncate">{tenantData.lastMessage}</p>
+              <p className="text-[10px] text-slate-600 mt-0.5">{tenantData.lastMessageDate}</p>
+            </div>
+          </div>
+          
+          <div className="flex items-start gap-3 p-3 rounded-xl bg-white/[0.03]">
+            <div className="w-8 h-8 rounded-lg bg-blue-400/10 flex items-center justify-center shrink-0">
+              <Gift className="w-4 h-4 text-blue-400" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-medium text-slate-200">Viimeisin palvelu</p>
+              <p className="text-[10px] text-slate-500 mt-0.5">{tenantData.lastService}</p>
+              <p className="text-[10px] text-slate-600 mt-0.5">{tenantData.lastServiceDate}</p>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Quick Actions */}
+      <motion.div variants={item} initial="hidden" animate="show" className="flex gap-3">
+        <button
+          onClick={() => onNavigate('messages')}
+          className="flex-1 bg-green-500 text-black rounded-2xl p-3.5 flex items-center justify-center gap-2 text-sm font-semibold hover:bg-green-400 transition-all duration-300 shadow-lg shadow-green-500/20"
+        >
+          <MessageCircle className="w-4 h-4" />
+          Lähetä viesti
+        </button>
+        <button
+          onClick={() => onNavigate('services')}
+          className="flex-1 glass rounded-2xl p-3.5 flex items-center justify-center gap-2 text-sm font-medium text-slate-300 hover:bg-white/[0.08] transition-all duration-300"
+        >
+          <Gift className="w-4 h-4" />
+          Tilaa lahja
+        </button>
+      </motion.div>
+    </>
   );
 }
 
