@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Calculator, Briefcase, Settings, HelpCircle, ChevronRight, User, Download, Building2 } from 'lucide-react';
+import { Calculator, Briefcase, Settings, HelpCircle, ChevronRight, User, Download, Building2, Pin, AlertTriangle } from 'lucide-react';
 import { taxSummary2025 } from '../data/mockData';
 
 const container = {
@@ -169,7 +169,7 @@ function TaxDetail() {
 
       <motion.div variants={item} className="glass-blue rounded-2xl p-4 mb-5 shadow-lg shadow-black/20">
         <div className="flex items-center gap-3">
-          <span className="text-lg">🧮</span>
+          <Calculator className="w-5 h-5 text-blue-400 shrink-0" />
           <div>
             <p className="text-sm font-semibold text-blue-400">
               Arvioitu vero ({taxRate}%): {estimatedTax.toLocaleString('fi-FI')} €
@@ -249,7 +249,7 @@ function TaxDetail() {
       </motion.div>
 
       <motion.div variants={item} className="glass rounded-2xl p-4 mb-4 border-amber-400/10 shadow-lg shadow-black/20" style={{ background: 'linear-gradient(135deg, rgba(46, 42, 26, 0.5), rgba(15, 17, 21, 0.9))' }}>
-        <p className="text-xs text-amber-400 font-medium mb-2">📌 Muistilista verotukseen</p>
+        <p className="text-xs text-amber-400 font-medium mb-2 flex items-center gap-1"><Pin size={12} /> Muistilista verotukseen</p>
         <ul className="text-[10px] text-slate-400 space-y-1">
           <li>• Vuokratulo ilmoitetaan lomakkeella 7H</li>
           <li>• Säilytä kuitit ja tositteet 6 vuotta</li>
@@ -260,7 +260,7 @@ function TaxDetail() {
       </motion.div>
 
       <motion.div variants={item} className="text-center">
-        <p className="text-[10px] text-slate-600">⚠️ Suuntaa-antava. Konsultoi veroneuvojaa.</p>
+        <p className="text-[10px] text-slate-600 flex items-center justify-center gap-1"><AlertTriangle size={10} /> Suuntaa-antava. Konsultoi veroneuvojaa.</p>
       </motion.div>
     </motion.div>
   );

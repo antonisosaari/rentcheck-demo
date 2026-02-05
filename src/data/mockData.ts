@@ -515,7 +515,7 @@ export const alerts: Alert[] = [
     timestamp: '2026-02-05T16:00:00',
     propertyId: 'kallio-1',
     severity: 'urgent',
-    icon: '📋',
+    icon: 'file-text',
   },
   {
     id: 'a0b',
@@ -525,7 +525,7 @@ export const alerts: Alert[] = [
     timestamp: '2025-04-01T10:00:00',
     propertyId: 'sornainen-1',
     severity: 'info',
-    icon: '✉️',
+    icon: 'mail',
   },
   {
     id: 'a1',
@@ -535,7 +535,7 @@ export const alerts: Alert[] = [
     timestamp: '2026-02-05T14:30:00',
     propertyId: 'kallio-1',
     severity: 'warning',
-    icon: '📊',
+    icon: 'bar-chart',
   },
   {
     id: 'a2',
@@ -545,7 +545,7 @@ export const alerts: Alert[] = [
     timestamp: '2026-02-05T09:00:00',
     propertyId: 'sornainen-1',
     severity: 'urgent',
-    icon: '⏰',
+    icon: 'clock',
   },
   {
     id: 'a3',
@@ -555,7 +555,7 @@ export const alerts: Alert[] = [
     timestamp: '2026-02-04T16:00:00',
     propertyId: 'vallila-1',
     severity: 'info',
-    icon: '📈',
+    icon: 'trending-up',
   },
   {
     id: 'a4',
@@ -565,7 +565,7 @@ export const alerts: Alert[] = [
     timestamp: '2026-02-03T11:15:00',
     propertyId: 'kallio-1',
     severity: 'warning',
-    icon: '🔔',
+    icon: 'bell',
   },
   {
     id: 'a5',
@@ -575,7 +575,7 @@ export const alerts: Alert[] = [
     timestamp: '2026-02-02T08:00:00',
     propertyId: 'kallio-1',
     severity: 'info',
-    icon: '💡',
+    icon: 'lightbulb',
   },
   {
     id: 'a6',
@@ -585,7 +585,7 @@ export const alerts: Alert[] = [
     timestamp: '2026-02-01T13:45:00',
     propertyId: 'sornainen-1',
     severity: 'info',
-    icon: '📊',
+    icon: 'bar-chart',
   },
   {
     id: 'a7',
@@ -595,7 +595,7 @@ export const alerts: Alert[] = [
     timestamp: '2026-01-31T10:20:00',
     propertyId: 'sornainen-1',
     severity: 'warning',
-    icon: '🏠',
+    icon: 'home',
   },
 ];
 

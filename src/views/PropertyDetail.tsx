@@ -4,7 +4,7 @@ import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
   CartesianGrid,
 } from 'recharts';
-import { ArrowLeft, MapPin, FileText, ExternalLink, Calendar, User, Receipt, Euro, CheckCircle, Clock, MessageCircle, Gift, Star, Heart } from 'lucide-react';
+import { ArrowLeft, MapPin, FileText, ExternalLink, Calendar, User, Receipt, Euro, CheckCircle, CheckCircle2, Clock, MessageCircle, Gift, Star, Heart, Building2 } from 'lucide-react';
 import type { Property } from '../data/mockData';
 import { leases, expenses } from '../data/mockData';
 import { PropertyValitys } from './Valitys';
@@ -51,7 +51,7 @@ const tenantRelationshipData: Record<string, {
     moveIn: '15.4.2024',
     duration: '1v 10kk',
     satisfaction: 5,
-    lastMessage: 'Sopii hyvin, kiitos nopeasta reagoinnista! 👍',
+    lastMessage: 'Sopii hyvin, kiitos nopeasta reagoinnista!',
     lastMessageDate: '4.2.2026',
     lastService: 'Joululahja lähetetty',
     lastServiceDate: '18.12.2025',
@@ -131,7 +131,7 @@ export function PropertyDetail({ property, initialTab, onGenerateLetter, onBack,
 
       {/* Photo Placeholder */}
       <motion.div variants={item} className="rounded-2xl h-36 mb-4 bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-white/5 flex items-center justify-center shadow-lg shadow-black/20">
-        <span className="text-4xl">🏠</span>
+        <Building2 size={36} className="text-slate-500" />
       </motion.div>
 
       {/* Key Stats Row */}
@@ -443,7 +443,7 @@ function LeaseTab({ lease }: { lease: typeof leases[0] }) {
               <span className="text-sm text-slate-300 flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-green-400" />{role}
               </span>
-              <span className="text-xs text-green-400 font-medium">Allekirjoitettu ✅</span>
+              <span className="text-xs text-green-400 font-medium flex items-center gap-1">Allekirjoitettu <CheckCircle2 size={12} className="text-green-400" /></span>
             </div>
           ))}
         </div>

@@ -42,14 +42,14 @@ const conversations: Conversation[] = [
     propertyName: 'Fleminginkatu 15 B 23',
     neighborhood: 'Kallio',
     avatar: 'M',
-    lastMessage: 'Sopii hyvin, kiitos nopeasta reagoinnista! 👍',
+    lastMessage: 'Sopii hyvin, kiitos nopeasta reagoinnista!',
     lastMessageTime: '1 pv sitten',
     unread: 0,
     type: 'tenant',
     messages: [
       { id: 'm1', sender: 'them', text: 'Hei, kylpyhuoneen hana vuotaa hieman. Voisikohan sen korjauttaa?', time: '3.2.2026 klo 14:22' },
       { id: 'm2', sender: 'landlord', text: 'Kiitos ilmoituksesta! Olen tilannut putkimiehen, tulee torstaina klo 10-12. Sopiiko?', time: '4.2.2026 klo 09:15' },
-      { id: 'm3', sender: 'them', text: 'Sopii hyvin, kiitos nopeasta reagoinnista! 👍', time: '4.2.2026 klo 10:03' },
+      { id: 'm3', sender: 'them', text: 'Sopii hyvin, kiitos nopeasta reagoinnista!', time: '4.2.2026 klo 10:03' },
     ],
   },
   {

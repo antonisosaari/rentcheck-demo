@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
-import { ChevronRight, Plus, Send } from 'lucide-react';
+import { ChevronRight, Plus, Send, AlertTriangle, Clock, MessageCircle, Lightbulb } from 'lucide-react';
 import { properties } from '../data/mockData';
 import type { View } from '../App';
+import type { ReactNode } from 'react';
 
 const container = {
   hidden: { opacity: 0 },
@@ -24,7 +25,7 @@ interface DashboardProps {
 interface FeedItem {
   id: string;
   priority: 'urgent' | 'warning' | 'info' | 'tip';
-  emoji: string;
+  icon: ReactNode;
   title: string;
   subtitle: string;
   action?: () => void;
@@ -38,7 +39,7 @@ export function Dashboard({ onSelectProperty, onNavigate }: DashboardProps) {
     {
       id: 'f1',
       priority: 'urgent',
-      emoji: '🔴',
+      icon: <AlertTriangle size={16} className="text-red-400" />,
       title: 'Vuokrankorotus: Fleminginkatu',
       subtitle: 'Ilmoita vuokralaiselle viim. 15.2.2026',
       action: () => onSelectProperty('kallio-1', 'sopimus'),
@@ -46,7 +47,7 @@ export function Dashboard({ onSelectProperty, onNavigate }: DashboardProps) {
     {
       id: 'f2',
       priority: 'warning',
-      emoji: '🟡',
+      icon: <Clock size={16} className="text-amber-400" />,
       title: 'Uusi hakija: Petra Nieminen',
       subtitle: 'Fleminginkatu · Sairaanhoitaja · 3 400 €/kk',
       action: () => onSelectProperty('kallio-1', 'valitys'),
@@ -54,7 +55,7 @@ export function Dashboard({ onSelectProperty, onNavigate }: DashboardProps) {
     {
       id: 'f3',
       priority: 'warning',
-      emoji: '🟡',
+      icon: <Clock size={16} className="text-amber-400" />,
       title: 'Näyttö huomenna: Juha Mäkinen klo 17:00',
       subtitle: 'Fleminginkatu 15 B · +perhe',
       action: () => onSelectProperty('kallio-1', 'valitys'),
@@ -62,15 +63,15 @@ export function Dashboard({ onSelectProperty, onNavigate }: DashboardProps) {
     {
       id: 'f4',
       priority: 'info',
-      emoji: '🔵',
+      icon: <MessageCircle size={16} className="text-blue-400" />,
       title: 'Matti Virtanen lähetti viestin',
-      subtitle: '"Sopii hyvin, kiitos nopeasta reagoinnista! 👍"',
+      subtitle: '"Sopii hyvin, kiitos nopeasta reagoinnista!"',
       action: () => onNavigate('messages'),
     },
     {
       id: 'f5',
       priority: 'tip',
-      emoji: '💡',
+      icon: <Lightbulb size={16} className="text-green-400" />,
       title: 'Vinkki: Matin vuokrasuhde täyttää 2v ensi kuussa',
       subtitle: 'Harkitse kiitosviesti tai pieni lahja',
       action: () => onSelectProperty('kallio-1', 'vuokralainen'),
@@ -88,7 +89,7 @@ export function Dashboard({ onSelectProperty, onNavigate }: DashboardProps) {
     <motion.div variants={container} initial="hidden" animate="show" exit={{ opacity: 0, y: -10 }}>
       {/* Greeting */}
       <motion.div variants={item} className="mb-5">
-        <p className="text-slate-400 text-sm">Hei Jyri 👋</p>
+        <p className="text-slate-400 text-sm">Hei Jyri</p>
       </motion.div>
 
       {/* Summary Stats */}
@@ -130,7 +131,7 @@ export function Dashboard({ onSelectProperty, onNavigate }: DashboardProps) {
               onClick={fi.action}
               className={`w-full glass rounded-2xl p-4 flex items-center gap-3 text-left transition-all duration-300 hover:bg-white/[0.08] shadow-lg shadow-black/20 border-l-[3px] ${borderColors[fi.priority]}`}
             >
-              <span className="text-lg shrink-0">{fi.emoji}</span>
+              <span className="shrink-0">{fi.icon}</span>
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-slate-100 text-sm">{fi.title}</p>
                 <p className="text-xs text-slate-500 mt-0.5 truncate">{fi.subtitle}</p>

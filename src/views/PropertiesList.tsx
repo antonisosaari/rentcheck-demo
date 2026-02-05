@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Megaphone } from 'lucide-react';
 import { properties } from '../data/mockData';
 
 const container = {
@@ -75,7 +75,7 @@ export function PropertiesList({ onSelectProperty }: PropertiesListProps) {
               {/* Active listing badge */}
               {isListing && (
                 <div className="mt-3 pt-3 border-t border-white/5 flex items-center gap-2">
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-green-400/10 text-green-400 border border-green-400/20 font-medium">📢 Välitys aktiivinen</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-green-400/10 text-green-400 border border-green-400/20 font-medium flex items-center gap-1"><Megaphone size={10} /> Välitys aktiivinen</span>
                   <span className="text-[10px] text-slate-500">5 hakijaa · 2 näyttöä</span>
                 </div>
               )}

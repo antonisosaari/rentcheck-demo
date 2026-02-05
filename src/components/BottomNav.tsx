@@ -1,16 +1,18 @@
 import { motion } from 'framer-motion';
+import { Home, Building2, MessageCircle, User } from 'lucide-react';
 import type { View } from '../App';
+import type { ReactNode } from 'react';
 
 interface BottomNavProps {
   currentView: View;
   onNavigate: (view: View) => void;
 }
 
-const tabs: { view: View; icon: string; label: string }[] = [
-  { view: 'dashboard', icon: '🏠', label: 'Koti' },
-  { view: 'properties', icon: '🏘️', label: 'Asunnot' },
-  { view: 'messages', icon: '💬', label: 'Viestit' },
-  { view: 'profile', icon: '👤', label: 'Profiili' },
+const tabs: { view: View; icon: ReactNode; label: string }[] = [
+  { view: 'dashboard', icon: <Home size={20} />, label: 'Koti' },
+  { view: 'properties', icon: <Building2 size={20} />, label: 'Asunnot' },
+  { view: 'messages', icon: <MessageCircle size={20} />, label: 'Viestit' },
+  { view: 'profile', icon: <User size={20} />, label: 'Profiili' },
 ];
 
 export function BottomNav({ currentView, onNavigate }: BottomNavProps) {
@@ -43,7 +45,7 @@ export function BottomNav({ currentView, onNavigate }: BottomNavProps) {
                     transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                   />
                 )}
-                <span className="text-lg relative z-10">{tab.icon}</span>
+                <span className={`relative z-10 ${isActive ? 'text-green-400' : 'text-slate-500'}`}>{tab.icon}</span>
                 <span className={`text-[10px] font-medium relative z-10 transition-colors duration-300 ${
                   isActive ? 'text-green-400' : 'text-slate-500'
                 }`}>

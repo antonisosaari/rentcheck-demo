@@ -3,8 +3,11 @@ import { motion } from 'framer-motion';
 import {
   Camera, Check, ChevronRight, Star, Calendar,
   Users, FileText, Send, X, Sparkles,
+  Megaphone, CheckCircle2, Handshake, Home, Building2,
+  Lightbulb, Clock,
 } from 'lucide-react';
 import type { Property } from '../data/mockData';
+import type { ReactNode } from 'react';
 
 const container = {
   hidden: { opacity: 0 },
@@ -21,12 +24,12 @@ const item = {
 
 type ValitysTab = 'ilmoitus' | 'hakijat' | 'naytot' | 'valinta';
 
-const pipelineSteps = [
-  { key: 'ilmoitus', label: 'Ilmoitus', icon: '📢' },
-  { key: 'hakijat', label: 'Yhteydenotot', icon: '👥' },
-  { key: 'naytot', label: 'Näytöt', icon: '📅' },
-  { key: 'valinta', label: 'Valinta', icon: '✅' },
-  { key: 'sopimus', label: 'Sopimus', icon: '📋' },
+const pipelineSteps: { key: string; label: string; icon: ReactNode }[] = [
+  { key: 'ilmoitus', label: 'Ilmoitus', icon: <Megaphone size={10} /> },
+  { key: 'hakijat', label: 'Yhteydenotot', icon: <Users size={10} /> },
+  { key: 'naytot', label: 'Näytöt', icon: <Calendar size={10} /> },
+  { key: 'valinta', label: 'Valinta', icon: <CheckCircle2 size={10} /> },
+  { key: 'sopimus', label: 'Sopimus', icon: <FileText size={10} /> },
 ];
 
 interface PropertyValitysProps {
@@ -48,7 +51,7 @@ export function PropertyValitys({ property }: PropertyValitysProps) {
           onClick={() => setShowOutsource(!showOutsource)}
           className="w-full glass rounded-2xl p-4 flex items-center gap-3 text-left transition-all duration-300 hover:bg-white/[0.08] shadow-lg shadow-black/20 border border-white/5"
         >
-          <span className="text-xl shrink-0">🤝</span>
+          <span className="shrink-0"><Handshake size={20} className="text-slate-300" /></span>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-slate-100">Haluatko ammattilaisen hoitavan?</p>
             <p className="text-[10px] text-slate-500">Anna välitys kumppanillemme</p>
@@ -73,12 +76,12 @@ export function PropertyValitys({ property }: PropertyValitysProps) {
             </div>
             <div className="space-y-2">
               {[
-                { name: 'Luottovälitys Oy', rating: '4.8', color: 'blue', icon: '🏢' },
-                { name: 'Vuokraturva', rating: '4.6', color: 'purple', icon: '🏠' },
+                { name: 'Luottovälitys Oy', rating: '4.8', color: 'blue', icon: <Building2 size={14} /> },
+                { name: 'Vuokraturva', rating: '4.6', color: 'purple', icon: <Home size={14} /> },
               ].map(partner => (
                 <div key={partner.name} className="glass rounded-xl p-3 flex items-center gap-3 border border-white/5">
-                  <div className={`w-9 h-9 rounded-lg bg-gradient-to-br from-${partner.color}-500/20 to-${partner.color}-600/10 border border-${partner.color}-500/20 flex items-center justify-center shrink-0`}>
-                    <span className="text-sm">{partner.icon}</span>
+                  <div className={`w-9 h-9 rounded-lg bg-gradient-to-br from-${partner.color}-500/20 to-${partner.color}-600/10 border border-${partner.color}-500/20 flex items-center justify-center shrink-0 text-slate-300`}>
+                    {partner.icon}
                   </div>
                   <div className="flex-1">
                     <p className="text-xs font-semibold text-slate-200">{partner.name}</p>
@@ -135,10 +138,10 @@ export function PropertyValitys({ property }: PropertyValitysProps) {
       {/* Sub-Tab Selector */}
       <motion.div variants={item} className="glass rounded-2xl p-1 flex gap-1 mb-4 shadow-lg shadow-black/20">
         {([
-          { key: 'ilmoitus', label: 'Ilmoitus', icon: '📢' },
-          { key: 'hakijat', label: 'Hakijat', icon: '👥' },
-          { key: 'naytot', label: 'Näytöt', icon: '📅' },
-          { key: 'valinta', label: 'Valinta', icon: '📋' },
+          { key: 'ilmoitus', label: 'Ilmoitus', icon: <Megaphone size={12} /> },
+          { key: 'hakijat', label: 'Hakijat', icon: <Users size={12} /> },
+          { key: 'naytot', label: 'Näytöt', icon: <Calendar size={12} /> },
+          { key: 'valinta', label: 'Valinta', icon: <FileText size={12} /> },
         ] as const).map(tab => (
           <button
             key={tab.key}
@@ -257,7 +260,7 @@ function IlmoitusTab({ property }: { property: Property }) {
                   {portals[keys[i]] && <Check className="w-3 h-3 text-black" />}
                 </div>
                 <span className="text-xs text-slate-200">{label}</span>
-                {published && portals[keys[i]] && <span className="ml-auto text-[10px] text-green-400">✅ Julkaistu</span>}
+                {published && portals[keys[i]] && <span className="ml-auto text-[10px] text-green-400 flex items-center gap-1"><CheckCircle2 size={10} className="text-green-400" /> Julkaistu</span>}
               </label>
             );
           })}
@@ -278,7 +281,7 @@ function IlmoitusTab({ property }: { property: Property }) {
           <div className="glass-green rounded-2xl p-4 text-center shadow-lg shadow-black/20">
             <div className="flex items-center justify-center gap-2 mb-2">
               <Check className="w-5 h-5 text-green-400" />
-              <span className="text-sm font-semibold text-green-400">Julkaistu 4 portaaliin ✅</span>
+              <span className="text-sm font-semibold text-green-400 flex items-center gap-1">Julkaistu 4 portaaliin <CheckCircle2 size={14} className="text-green-400" /></span>
             </div>
             <p className="text-[10px] text-slate-400">Ilmoitus näkyy kaikilla alustoilla 15 minuutin kuluessa</p>
           </div>
@@ -312,6 +315,7 @@ interface Candidate {
   income: number;
   message: string;
   status: string;
+  statusIcon: ReactNode;
   statusColor: string;
   aiScore: number;
   recommended: boolean;
@@ -321,27 +325,27 @@ const candidates: Candidate[] = [
   {
     id: 'c1', name: 'Matti Virtanen', age: 32, profession: 'Insinööri', householdSize: '2 hlö talous', income: 4200,
     message: 'Hei! Olemme kiinnostuneita asunnosta. Olemme rauhallinen pariskunta ja molemmat työssäkäyviä.',
-    status: '⭐ Suositeltu', statusColor: 'text-amber-400 bg-amber-400/10 border-amber-400/20', aiScore: 95, recommended: true,
+    status: 'Suositeltu', statusIcon: <Star size={10} className="text-amber-400" />, statusColor: 'text-amber-400 bg-amber-400/10 border-amber-400/20', aiScore: 95, recommended: true,
   },
   {
     id: 'c2', name: 'Anna Korhonen', age: 28, profession: 'Graafikko', householdSize: '1 hlö', income: 3100,
     message: 'Moi! Etsin yksiötä/kaksiota Kalliosta. Olen siisti ja rauhallinen vuokralainen.',
-    status: 'Uusi', statusColor: 'text-blue-400 bg-blue-400/10 border-blue-400/20', aiScore: 78, recommended: false,
+    status: 'Uusi', statusIcon: null, statusColor: 'text-blue-400 bg-blue-400/10 border-blue-400/20', aiScore: 78, recommended: false,
   },
   {
     id: 'c3', name: 'Juha Mäkinen', age: 45, profession: 'Opettaja', householdSize: '3 hlö (1 lapsi)', income: 3800,
     message: 'Terve, olisimme kiinnostuneita. Meillä on 5-vuotias lapsi ja kissa.',
-    status: 'Näyttö sovittu 15.3.', statusColor: 'text-green-400 bg-green-400/10 border-green-400/20', aiScore: 82, recommended: false,
+    status: 'Näyttö sovittu 15.3.', statusIcon: null, statusColor: 'text-green-400 bg-green-400/10 border-green-400/20', aiScore: 82, recommended: false,
   },
   {
     id: 'c4', name: 'Li Wei', age: 25, profession: 'Opiskelija / osa-aikatyö', householdSize: '1 hlö', income: 1800,
     message: "Hello! I'm an exchange student at Aalto University. Very interested!",
-    status: 'Vastaus lähetetty', statusColor: 'text-slate-400 bg-white/5 border-white/10', aiScore: 45, recommended: false,
+    status: 'Vastaus lähetetty', statusIcon: null, statusColor: 'text-slate-400 bg-white/5 border-white/10', aiScore: 45, recommended: false,
   },
   {
     id: 'c5', name: 'Petra Nieminen', age: 38, profession: 'Sairaanhoitaja', householdSize: '1 hlö', income: 3400,
     message: 'Hei! Olen muuttamassa Helsinkiin työn perässä. Rauhallinen ja luotettava vuokralainen.',
-    status: 'Uusi', statusColor: 'text-blue-400 bg-blue-400/10 border-blue-400/20', aiScore: 80, recommended: false,
+    status: 'Uusi', statusIcon: null, statusColor: 'text-blue-400 bg-blue-400/10 border-blue-400/20', aiScore: 80, recommended: false,
   },
 ];
 
@@ -355,7 +359,7 @@ function HakijatTab() {
           <span className="text-xs font-semibold text-green-400">AI-suositus</span>
         </div>
         <p className="text-xs text-slate-300 leading-relaxed">
-          <span className="font-semibold text-slate-100">Matti Virtanen</span> — Vakaat tulot (4.4× vuokra), pariskunta ilman lemmikkejä, pitkäaikainen vuokrasuhde todennäköinen.
+          <span className="font-semibold text-slate-100">Matti Virtanen</span> — Vakaat tulot (4.4x vuokra), pariskunta ilman lemmikkejä, pitkäaikainen vuokrasuhde todennäköinen.
         </p>
       </motion.div>
 
@@ -387,7 +391,7 @@ function HakijatTab() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap mb-1">
                   <h3 className="text-sm font-semibold text-slate-100">{candidate.name}</h3>
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full border font-medium ${candidate.statusColor}`}>{candidate.status}</span>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full border font-medium flex items-center gap-1 ${candidate.statusColor}`}>{candidate.statusIcon}{candidate.status}</span>
                 </div>
                 <div className="flex items-center gap-1.5 flex-wrap mb-2">
                   <span className="text-[10px] text-slate-500">{candidate.age}v</span>
@@ -437,14 +441,14 @@ function HakijatTab() {
 function NaytotTab({ property }: { property: Property }) {
   const showings = [
     { id: 's3', date: '12.3.2026', time: '18:00', candidate: 'Anna Korhonen', extra: '', status: 'completed' as const, notes: 'Positiivinen vaikutelma, siisti olemus, kyseli taloyhtiöstä' },
-    { id: 's1', date: '15.3.2026', time: '17:00', candidate: 'Juha Mäkinen', extra: '+perhe', status: 'upcoming' as const, reminders: ['Muistutus lähetetty 14.3. ✅', 'Kalenterimerkintä: ✅ Vuokranantaja ✅ Vuokralainen'] },
+    { id: 's1', date: '15.3.2026', time: '17:00', candidate: 'Juha Mäkinen', extra: '+perhe', status: 'upcoming' as const, reminders: ['Muistutus lähetetty 14.3.', 'Kalenterimerkintä: Vuokranantaja + Vuokralainen'] },
     { id: 's2', date: '16.3.2026', time: '10:00', candidate: 'Matti Virtanen', extra: '+puoliso', status: 'confirmed' as const },
   ];
 
   return (
     <motion.div variants={container} initial="hidden" animate="show">
       <motion.div variants={item} className="glass-green rounded-xl p-3 mb-4 flex items-start gap-2 shadow-lg shadow-black/20">
-        <span className="text-base shrink-0">💡</span>
+        <span className="shrink-0"><Lightbulb size={16} className="text-green-400" /></span>
         <p className="text-[11px] text-slate-300 leading-relaxed">
           <span className="text-green-400 font-semibold">Vinkki:</span> Varaa näytöille 30 min välit. Näytä ensin yleiset tilat.
         </p>
@@ -464,13 +468,13 @@ function NaytotTab({ property }: { property: Property }) {
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
                 showing.status === 'completed' ? 'bg-green-500/10 border border-green-500/20' : 'bg-blue-500/10 border border-blue-500/20'
               }`}>
-                <span className="text-lg">📅</span>
+                <Calendar size={18} className={showing.status === 'completed' ? 'text-green-400' : 'text-blue-400'} />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-sm font-semibold text-slate-100">{showing.date} klo {showing.time}</span>
-                  {showing.status === 'completed' && <span className="text-[10px] px-2 py-0.5 rounded-full bg-green-400/10 text-green-400 border border-green-400/20 font-medium">PIDETTY ✅</span>}
-                  {showing.status === 'confirmed' && <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-400/10 text-blue-400 border border-blue-400/20 font-medium">Vahvistettu ✅</span>}
+                  {showing.status === 'completed' && <span className="text-[10px] px-2 py-0.5 rounded-full bg-green-400/10 text-green-400 border border-green-400/20 font-medium flex items-center gap-1">PIDETTY <CheckCircle2 size={10} /></span>}
+                  {showing.status === 'confirmed' && <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-400/10 text-blue-400 border border-blue-400/20 font-medium flex items-center gap-1">Vahvistettu <CheckCircle2 size={10} /></span>}
                 </div>
                 <p className="text-xs text-slate-300 mb-1">
                   {showing.candidate} {showing.extra && <span className="text-slate-500">({showing.extra})</span>}
@@ -539,13 +543,13 @@ function ValintaTab() {
                 </span>
               </div>
               <h3 className="text-xs font-semibold text-slate-100">{candidate.name}</h3>
-              {candidate.recommended && <span className="text-[9px] text-green-400 font-medium">⭐ AI-suositeltu</span>}
+              {candidate.recommended && <span className="text-[9px] text-green-400 font-medium flex items-center justify-center gap-1"><Star size={10} className="text-amber-400" /> AI-suositeltu</span>}
             </div>
             <div className="space-y-1.5 text-[10px]">
               <div className="flex justify-between"><span className="text-slate-500">Ikä</span><span className="text-slate-300">{candidate.age}v</span></div>
               <div className="flex justify-between"><span className="text-slate-500">Ammatti</span><span className="text-slate-300">{candidate.profession}</span></div>
               <div className="flex justify-between"><span className="text-slate-500">Tulot</span><span className="text-slate-300 font-medium">{candidate.income.toLocaleString('fi-FI')} €</span></div>
-              <div className="flex justify-between"><span className="text-slate-500">Suhde</span><span className={`font-medium ${candidate.income / 950 >= 3 ? 'text-green-400' : 'text-amber-400'}`}>{(candidate.income / 950).toFixed(1)}× vuokra</span></div>
+              <div className="flex justify-between"><span className="text-slate-500">Suhde</span><span className={`font-medium ${candidate.income / 950 >= 3 ? 'text-green-400' : 'text-amber-400'}`}>{(candidate.income / 950).toFixed(1)}x vuokra</span></div>
               <div className="flex justify-between"><span className="text-slate-500">AI</span><span className={`font-medium ${candidate.aiScore >= 80 ? 'text-green-400' : 'text-amber-400'}`}>{candidate.aiScore}%</span></div>
             </div>
             {!selected && (
@@ -567,10 +571,10 @@ function ValintaTab() {
           <div className="glass-green rounded-2xl p-5 shadow-lg shadow-black/20">
             <h3 className="text-sm font-semibold text-green-400 mb-4">Vuokrausprosessi</h3>
             <div className="space-y-3">
-              <FlowStep icon="✅" label="Vuokralainen valittu: Matti Virtanen" done />
-              <FlowStep icon="⏳" label="Sopimus lähetetty allekirjoitettavaksi" />
-              <FlowStep icon="⏳" label="Vakuus maksettu" />
-              <FlowStep icon="⏳" label="Avainten luovutus" />
+              <FlowStep icon={<CheckCircle2 size={16} className="text-green-400" />} label="Vuokralainen valittu: Matti Virtanen" done />
+              <FlowStep icon={<Clock size={16} className="text-amber-400" />} label="Sopimus lähetetty allekirjoitettavaksi" />
+              <FlowStep icon={<Clock size={16} className="text-amber-400" />} label="Vakuus maksettu" />
+              <FlowStep icon={<Clock size={16} className="text-amber-400" />} label="Avainten luovutus" />
             </div>
           </div>
           <div className="glass rounded-2xl p-5 shadow-lg shadow-black/20 border border-white/5">
@@ -604,10 +608,10 @@ function ValintaTab() {
   );
 }
 
-function FlowStep({ icon, label, done }: { icon: string; label: string; done?: boolean }) {
+function FlowStep({ icon, label, done }: { icon: ReactNode; label: string; done?: boolean }) {
   return (
     <div className="flex items-center gap-3">
-      <span className="text-base shrink-0">{icon}</span>
+      <span className="shrink-0">{icon}</span>
       <span className={`text-xs ${done ? 'text-green-400 font-medium' : 'text-slate-400'}`}>{label}</span>
       {done && <Check className="w-3.5 h-3.5 text-green-400 ml-auto shrink-0" />}
     </div>

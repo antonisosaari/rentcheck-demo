@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Copy, Download, Check, FileText, Sparkles, ArrowLeft } from 'lucide-react';
+import { Copy, Download, Check, FileText, Sparkles, ArrowLeft, AlertTriangle } from 'lucide-react';
 import type { Property } from '../data/mockData';
 
 const container = {
@@ -185,7 +185,7 @@ ___________________________
       {/* Disclaimer */}
       <motion.div variants={item} className="mt-4 text-center">
         <p className="text-[10px] text-slate-600 leading-relaxed">
-          ⚠️ AI-luoma malli. Tarkista tiedot ennen lähettämistä.
+          <span className="inline-flex items-center gap-1"><AlertTriangle size={10} /> AI-luoma malli. Tarkista tiedot ennen lähettämistä.</span>
         </p>
       </motion.div>
     </motion.div>
