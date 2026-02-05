@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { Header } from './components/Header';
+import { BottomNav } from './components/BottomNav';
 import { Dashboard } from './views/Dashboard';
 import { PropertyDetail } from './views/PropertyDetail';
 import { RentLetter } from './views/RentLetter';
@@ -33,14 +33,8 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f1f5f9]">
-      <Header
-        currentView={currentView}
-        onNavigate={navigateTo}
-        onBack={goBack}
-        showBack={currentView === 'property' || currentView === 'letter'}
-      />
-      <main className="max-w-5xl mx-auto px-4 pb-8 pt-4">
+    <div className="min-h-screen bg-[#0f1115]">
+      <main className="max-w-md mx-auto px-4 pb-24 pt-6">
         <AnimatePresence mode="wait">
           {currentView === 'dashboard' && (
             <Dashboard key="dashboard" onSelectProperty={(id) => navigateTo('property', id)} onNavigate={navigateTo} />
@@ -83,6 +77,7 @@ function App() {
           )}
         </AnimatePresence>
       </main>
+      <BottomNav currentView={currentView} onNavigate={navigateTo} />
     </div>
   );
 }

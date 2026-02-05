@@ -32,8 +32,7 @@ export function Leases({ onSelectProperty }: LeasesProps) {
   const daysUntil = (dateStr: string) => {
     const target = new Date(dateStr);
     const now = new Date('2026-02-05');
-    const diff = Math.ceil((target.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-    return diff;
+    return Math.ceil((target.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
   };
 
   return (
@@ -41,133 +40,116 @@ export function Leases({ onSelectProperty }: LeasesProps) {
       {/* Header */}
       <motion.div variants={item} className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Sopimukset</h1>
-          <p className="text-sm text-gray-500 mt-1">Vuokrasopimukset ja korotukset</p>
+          <h1 className="text-xl font-bold text-slate-100">Sopimukset</h1>
+          <p className="text-xs text-slate-500 mt-1">Vuokrasopimukset ja korotukset</p>
         </div>
         <button
           onClick={() => setShowForm(true)}
-          className="flex items-center gap-1.5 px-4 py-2.5 bg-[#2563eb] text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+          className="flex items-center gap-1.5 px-3 py-2 bg-green-500 text-black rounded-xl text-xs font-semibold hover:bg-green-400 transition-all duration-300"
         >
-          <Plus className="w-4 h-4" />
-          <span>Luo uusi sopimus</span>
+          <Plus className="w-3.5 h-3.5" />
+          <span>Uusi</span>
         </button>
       </motion.div>
 
       {/* Lease Cards */}
-      <div className="space-y-4">
+      <div className="space-y-3">
         {leases.map((lease) => {
           const notifyDays = daysUntil(lease.notifyByDate);
           const isUrgent = notifyDays <= 14 && notifyDays > 0;
-          const isPast = notifyDays <= 0;
 
           return (
             <motion.div
               key={lease.id}
               variants={item}
-              className={`bg-white rounded-xl border p-5 ${
-                isUrgent ? 'border-amber-300 shadow-amber-100 shadow-md' : 'border-[#e2e8f0]'
+              className={`glass rounded-2xl p-5 shadow-lg shadow-black/20 ${
+                isUrgent ? 'border-amber-400/20' : ''
               }`}
             >
-              {/* Lease Header */}
+              {/* Header */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
-                    <span className="text-white font-bold">{lease.neighborhood[0]}</span>
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500/20 to-green-600/10 border border-green-500/20 flex items-center justify-center">
+                    <span className="text-green-400 font-bold">{lease.neighborhood[0]}</span>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900">{lease.propertyAddress}</h3>
-                    <p className="text-sm text-gray-500">{lease.neighborhood} · Toistaiseksi voimassa</p>
+                    <h3 className="font-semibold text-slate-100 text-sm">{lease.propertyAddress}</h3>
+                    <p className="text-xs text-slate-500">{lease.neighborhood} · Toistaiseksi</p>
                   </div>
                 </div>
-                <span className="bg-green-50 text-green-700 text-xs font-medium px-2.5 py-1 rounded-full">
+                <span className="text-[10px] font-semibold text-green-400 bg-green-400/10 px-2 py-1 rounded-full border border-green-400/15">
                   Voimassa
                 </span>
               </div>
 
-              {/* Lease Details Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+              {/* Details Grid */}
+              <div className="grid grid-cols-2 gap-3 mb-4">
                 <div className="flex items-center gap-2">
-                  <User className="w-4 h-4 text-gray-400" />
+                  <User className="w-3.5 h-3.5 text-slate-600" />
                   <div>
-                    <p className="text-xs text-gray-400">Vuokralainen</p>
-                    <p className="text-sm font-medium text-gray-900">{lease.tenantName}</p>
+                    <p className="text-[10px] text-slate-600">Vuokralainen</p>
+                    <p className="text-xs font-medium text-slate-300">{lease.tenantName}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-gray-400" />
+                  <Calendar className="w-3.5 h-3.5 text-slate-600" />
                   <div>
-                    <p className="text-xs text-gray-400">Alkanut</p>
-                    <p className="text-sm font-medium text-gray-900">{formatDate(lease.leaseStart)}</p>
+                    <p className="text-[10px] text-slate-600">Alkanut</p>
+                    <p className="text-xs font-medium text-slate-300">{formatDate(lease.leaseStart)}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Euro className="w-4 h-4 text-gray-400" />
+                  <Euro className="w-3.5 h-3.5 text-slate-600" />
                   <div>
-                    <p className="text-xs text-gray-400">Vuokra</p>
-                    <p className="text-sm font-medium text-gray-900">{lease.rentAmount} €/kk</p>
+                    <p className="text-[10px] text-slate-600">Vuokra</p>
+                    <p className="text-xs font-medium text-green-400">{lease.rentAmount} €/kk</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4 text-gray-400" />
+                  <TrendingUp className="w-3.5 h-3.5 text-slate-600" />
                   <div>
-                    <p className="text-xs text-gray-400">Korotuslauseke</p>
-                    <p className="text-sm font-medium text-gray-900">max {lease.maxAnnualIncrease} %/vuosi</p>
+                    <p className="text-[10px] text-slate-600">Korotus</p>
+                    <p className="text-xs font-medium text-slate-300">max {lease.maxAnnualIncrease}%/v</p>
                   </div>
                 </div>
               </div>
 
               {/* Increase Info */}
-              <div className={`rounded-lg p-3 mb-4 ${
-                isUrgent ? 'bg-amber-50 border border-amber-200' : isPast ? 'bg-gray-50' : 'bg-blue-50'
+              <div className={`rounded-xl p-3 mb-4 border ${
+                isUrgent
+                  ? 'bg-amber-400/10 border-amber-400/15'
+                  : 'bg-white/[0.03] border-white/5'
               }`}>
-                {lease.lastIncreaseDate ? (
-                  <div className="flex items-center gap-2 text-sm">
-                    <CheckCircle className="w-4 h-4 text-green-500 shrink-0" />
-                    <span className="text-gray-700">
-                      Edellinen korotus {formatDate(lease.lastIncreaseDate)}: +{lease.lastIncreasePercent} %
+                {lease.lastIncreaseDate && (
+                  <div className="flex items-center gap-2 text-xs mb-2">
+                    <CheckCircle className="w-3.5 h-3.5 text-green-400 shrink-0" />
+                    <span className="text-slate-400">
+                      Edellinen korotus {formatDate(lease.lastIncreaseDate)}: +{lease.lastIncreasePercent}%
                     </span>
                   </div>
-                ) : null}
-                <div className={`flex items-center gap-2 text-sm ${lease.lastIncreaseDate ? 'mt-2' : ''}`}>
+                )}
+                <div className="flex items-center gap-2 text-xs">
                   {isUrgent ? (
-                    <Clock className="w-4 h-4 text-amber-500 shrink-0" />
+                    <Clock className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                   ) : (
-                    <Calendar className="w-4 h-4 text-blue-500 shrink-0" />
+                    <Calendar className="w-3.5 h-3.5 text-blue-400 shrink-0" />
                   )}
-                  <span className={isUrgent ? 'text-amber-800 font-medium' : 'text-gray-700'}>
-                    Seuraava korotus mahdollinen {formatDate(lease.nextIncreaseEligible)}
-                    {isUrgent && (
-                      <span className="text-amber-600"> — ilmoitettava viimeistään {formatDate(lease.notifyByDate)} ({notifyDays} pv)</span>
-                    )}
-                    {!isUrgent && !isPast && (
-                      <span className="text-gray-500"> (ilmoitus viim. {formatDate(lease.notifyByDate)})</span>
-                    )}
+                  <span className={isUrgent ? 'text-amber-400' : 'text-slate-400'}>
+                    Seuraava korotus {formatDate(lease.nextIncreaseEligible)}
+                    {isUrgent && ` — ilmoita viim. ${formatDate(lease.notifyByDate)} (${notifyDays}pv)`}
+                    {!isUrgent && ` (ilmoitus viim. ${formatDate(lease.notifyByDate)})`}
                   </span>
                 </div>
               </div>
 
-              {/* Signature Status */}
-              <div className="flex items-center gap-4 mb-4 text-sm">
-                <span className="text-gray-500">Allekirjoitukset:</span>
-                <span className="flex items-center gap-1">
-                  {lease.landlordSigned ? (
-                    <CheckCircle className="w-4 h-4 text-green-500" />
-                  ) : (
-                    <Clock className="w-4 h-4 text-amber-500" />
-                  )}
-                  <span className={lease.landlordSigned ? 'text-green-700' : 'text-amber-700'}>
-                    Vuokranantaja {lease.landlordSigned ? '✅' : '⏳'}
-                  </span>
+              {/* Signatures */}
+              <div className="flex items-center gap-3 mb-4 text-xs">
+                <span className="text-slate-600">Allekirjoitukset:</span>
+                <span className="flex items-center gap-1 text-green-400">
+                  <CheckCircle className="w-3 h-3" /> Vuokranantaja ✅
                 </span>
-                <span className="flex items-center gap-1">
-                  {lease.tenantSigned ? (
-                    <CheckCircle className="w-4 h-4 text-green-500" />
-                  ) : (
-                    <Clock className="w-4 h-4 text-amber-500" />
-                  )}
-                  <span className={lease.tenantSigned ? 'text-green-700' : 'text-amber-700'}>
-                    Vuokralainen {lease.tenantSigned ? '✅' : '⏳'}
-                  </span>
+                <span className="flex items-center gap-1 text-green-400">
+                  <CheckCircle className="w-3 h-3" /> Vuokralainen ✅
                 </span>
               </div>
 
@@ -175,22 +157,22 @@ export function Leases({ onSelectProperty }: LeasesProps) {
               <div className="flex gap-2">
                 <button
                   onClick={() => setShowPreview(lease.id)}
-                  className="flex items-center gap-1.5 px-3 py-2 bg-gray-50 border border-[#e2e8f0] rounded-lg text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs text-slate-400 bg-white/5 border border-white/5 hover:bg-white/[0.08] transition-all duration-300"
                 >
-                  <FileText className="w-4 h-4" />
-                  <span>Näytä sopimus</span>
+                  <FileText className="w-3.5 h-3.5" />
+                  Sopimus
                 </button>
                 <button
                   onClick={() => onSelectProperty(lease.propertyId)}
-                  className="flex items-center gap-1.5 px-3 py-2 bg-gray-50 border border-[#e2e8f0] rounded-lg text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs text-slate-400 bg-white/5 border border-white/5 hover:bg-white/[0.08] transition-all duration-300"
                 >
-                  <span>Asunnon tiedot →</span>
+                  Asunto →
                 </button>
                 <button
-                  className="flex items-center gap-1.5 px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg text-sm text-[#2563eb] hover:bg-blue-100 transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs text-green-400 bg-green-400/10 border border-green-400/10 hover:bg-green-400/15 transition-all duration-300"
                 >
-                  <PenLine className="w-4 h-4" />
-                  <span>Allekirjoita sähköisesti</span>
+                  <PenLine className="w-3.5 h-3.5" />
+                  e-Allekirjoitus
                 </button>
               </div>
             </motion.div>
@@ -198,7 +180,7 @@ export function Leases({ onSelectProperty }: LeasesProps) {
         })}
       </div>
 
-      {/* Lease Preview Modal */}
+      {/* Modals */}
       <AnimatePresence>
         {showPreview && (
           <LeasePreviewModal
@@ -208,7 +190,6 @@ export function Leases({ onSelectProperty }: LeasesProps) {
         )}
       </AnimatePresence>
 
-      {/* New Lease Form Modal */}
       <AnimatePresence>
         {showForm && (
           <NewLeaseFormModal onClose={() => setShowForm(false)} />
@@ -229,84 +210,63 @@ function LeasePreviewModal({ lease, onClose }: { lease: typeof leases[0]; onClos
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
       onClick={onClose}
     >
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.95 }}
-        className="bg-white rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto"
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        className="glass rounded-2xl max-w-lg w-full max-h-[85vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between p-5 border-b border-[#e2e8f0]">
+        <div className="flex items-center justify-between p-5 border-b border-white/5">
           <div className="flex items-center gap-2">
-            <FileText className="w-5 h-5 text-[#2563eb]" />
-            <h2 className="text-lg font-bold text-gray-900">Vuokrasopimus</h2>
+            <FileText className="w-4 h-4 text-green-400" />
+            <h2 className="text-base font-bold text-slate-100">Vuokrasopimus</h2>
           </div>
-          <button onClick={onClose} className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
-            <X className="w-5 h-5 text-gray-500" />
+          <button onClick={onClose} className="p-2 rounded-xl hover:bg-white/5 transition-all duration-300">
+            <X className="w-4 h-4 text-slate-500" />
           </button>
         </div>
-        <div className="p-5 sm:p-8">
-          <pre className="text-sm text-gray-800 whitespace-pre-wrap font-[inherit] leading-relaxed">
+        <div className="p-5">
+          <pre className="text-xs text-slate-300 whitespace-pre-wrap font-[inherit] leading-relaxed">
 {`ASUINHUONEISTON VUOKRASOPIMUS
 Toistaiseksi voimassa oleva
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 VUOKRANANTAJA
 [Vuokranantajan nimi]
-[Osoite]
-[Puhelinnumero]
 
 VUOKRALAINEN
 ${lease.tenantName}
-[Vuokralaisen osoite]
-[Puhelinnumero]
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 VUOKRAUKSEN KOHDE
-Osoite: ${lease.propertyAddress}, Helsinki
-Huoneisto: ${lease.neighborhood}
+${lease.propertyAddress}, Helsinki
 
 VUOKRA-AIKA
-Sopimus on voimassa toistaiseksi ${formatDate(lease.leaseStart)} alkaen.
-Irtisanomisaika on vuokranantajalle 6 kuukautta ja 
-vuokralaiselle 1 kuukausi.
+Toistaiseksi ${formatDate(lease.leaseStart)} alkaen.
 
 VUOKRA
-Vuokra on ${lease.rentAmount},00 euroa kuukaudessa.
-Vuokra maksetaan kuukauden 2. päivään mennessä 
-vuokranantajan ilmoittamalle pankkitilille.
+${lease.rentAmount},00 €/kk
 
 VUOKRANKOROTUS
-Vuokranantajalla on oikeus korottaa vuokraa kerran 
-vuodessa sopimuksen alkamispäivästä lukien. 
-Korotus on enintään ${lease.maxAnnualIncrease} % vuodessa.
-Korotuksesta on ilmoitettava kirjallisesti 
-vähintään 2 kuukautta ennen korotuksen voimaantuloa.
+Max ${lease.maxAnnualIncrease} % vuodessa.
+Ilmoitettava 2 kk ennen.
 
 VAKUUS
-Vuokralainen on maksanut vakuuden, joka vastaa 
-kahden (2) kuukauden vuokraa eli ${lease.rentAmount * 2},00 euroa.
+${lease.rentAmount * 2},00 € (2 kk vuokraa)
 
-MUUT EHDOT
-- Tupakointi huoneistossa on kielletty
-- Lemmikkieläimet: sovittava erikseen
-- Vuokralainen vastaa huoneiston tavanomaisesta 
-  kunnossapidosta
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ALLEKIRJOITUKSET
 
 Päivämäärä: ${formatDate(lease.leaseStart)}
 
 Vuokranantaja: ________________________
-               [Vuokranantajan nimi]
-
 Vuokralainen: ________________________
                ${lease.tenantName}`}
           </pre>
@@ -322,33 +282,33 @@ function NewLeaseFormModal({ onClose }: { onClose: () => void }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
       onClick={onClose}
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="bg-white rounded-2xl max-w-lg w-full max-h-[85vh] overflow-y-auto"
+        className="glass rounded-2xl max-w-lg w-full max-h-[85vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between p-5 border-b border-[#e2e8f0]">
-          <h2 className="text-lg font-bold text-gray-900">Luo uusi sopimus</h2>
-          <button onClick={onClose} className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
-            <X className="w-5 h-5 text-gray-500" />
+        <div className="flex items-center justify-between p-5 border-b border-white/5">
+          <h2 className="text-base font-bold text-slate-100">Luo uusi sopimus</h2>
+          <button onClick={onClose} className="p-2 rounded-xl hover:bg-white/5 transition-all duration-300">
+            <X className="w-4 h-4 text-slate-500" />
           </button>
         </div>
         <div className="p-5 space-y-4">
           <FormField label="Vuokralaisen nimi" placeholder="Etunimi Sukunimi" />
-          <FormField label="Vuokralaisen sähköposti" placeholder="email@esimerkki.fi" type="email" />
-          <FormField label="Vuokralaisen puhelinnumero" placeholder="+358 40 123 4567" />
+          <FormField label="Sähköposti" placeholder="email@esimerkki.fi" type="email" />
+          <FormField label="Puhelinnumero" placeholder="+358 40 123 4567" />
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Asunto</label>
-            <select className="w-full px-3 py-2.5 bg-gray-50 border border-[#e2e8f0] rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-              <option>Valitse asunto...</option>
-              <option>Fleminginkatu 15 B 23, Kallio</option>
-              <option>Hämeentie 42 A 8, Sörnäinen</option>
-              <option>Nilsiänkatu 8 C 12, Vallila</option>
+            <label className="block text-xs font-medium text-slate-400 mb-1.5">Asunto</label>
+            <select className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-green-400/50 focus:border-transparent">
+              <option value="" className="bg-[#1a1d23]">Valitse asunto...</option>
+              <option value="1" className="bg-[#1a1d23]">Fleminginkatu 15 B 23, Kallio</option>
+              <option value="2" className="bg-[#1a1d23]">Hämeentie 42 A 8, Sörnäinen</option>
+              <option value="3" className="bg-[#1a1d23]">Nilsiänkatu 8 C 12, Vallila</option>
             </select>
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -362,13 +322,13 @@ function NewLeaseFormModal({ onClose }: { onClose: () => void }) {
           <div className="pt-2 flex gap-3">
             <button
               onClick={onClose}
-              className="flex-1 px-4 py-2.5 bg-gray-50 border border-[#e2e8f0] rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+              className="flex-1 px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm font-medium text-slate-400 hover:bg-white/[0.08] transition-all duration-300"
             >
               Peruuta
             </button>
             <button
               onClick={onClose}
-              className="flex-1 px-4 py-2.5 bg-[#2563eb] text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+              className="flex-1 px-4 py-2.5 bg-green-500 text-black rounded-xl text-sm font-semibold hover:bg-green-400 transition-all duration-300"
             >
               Luo sopimus
             </button>
@@ -390,11 +350,11 @@ function FormField({
 }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1.5">{label}</label>
+      <label className="block text-xs font-medium text-slate-400 mb-1.5">{label}</label>
       <input
         type={type}
         placeholder={placeholder}
-        className="w-full px-3 py-2.5 bg-gray-50 border border-[#e2e8f0] rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-green-400/50 focus:border-transparent"
       />
     </div>
   );

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Copy, Download, Check, FileText, Sparkles } from 'lucide-react';
+import { Copy, Download, Check, FileText, Sparkles, ArrowLeft } from 'lucide-react';
 import type { Property } from '../data/mockData';
 
 const container = {
@@ -21,14 +21,14 @@ interface RentLetterProps {
   onBack: () => void;
 }
 
-export function RentLetter({ property }: RentLetterProps) {
+export function RentLetter({ property, onBack }: RentLetterProps) {
   const [copied, setCopied] = useState(false);
 
   const delta = property.marketEstimate - property.currentRent;
-  const deltaPercent = ((delta / property.currentRent) * 100).toFixed(1);
-  const newRent = Math.round(property.currentRent + delta * 0.75); // Suggest 75% of delta
+  const newRent = Math.round(property.currentRent + delta * 0.75);
   const increaseAmount = newRent - property.currentRent;
   const increasePercent = ((increaseAmount / property.currentRent) * 100).toFixed(1);
+  const deltaPercent = ((delta / property.currentRent) * 100).toFixed(1);
 
   const avgComparable = Math.round(
     property.comparables.reduce((s, c) => s + c.rent, 0) / property.comparables.length
@@ -65,34 +65,25 @@ Korotus astuu voimaan: ${formatDate(effectiveDate)}
 
 PERUSTELUT
 
-Vuokrankorotus perustuu huoneiston vuokran saattamiseen lähemmäksi alueen käypää vuokratasoa. Vuokrankorotus on kohtuullinen seuraavilla perusteilla:
+Vuokrankorotus perustuu huoneiston vuokran saattamiseen lähemmäksi alueen käypää vuokratasoa.
 
 1. Alueen vuokrataso
-${property.neighborhood}n alueen vastaavien ${property.type}-asuntojen keskimääräinen vuokrataso on tällä hetkellä ${avgComparable} €/kk. Nykyinen vuokra ${property.currentRent} €/kk on ${deltaPercent} % alle alueen keskitason.
+${property.neighborhood}n alueen vastaavien ${property.type}-asuntojen keskimääräinen vuokrataso on ${avgComparable} €/kk. Nykyinen vuokra ${property.currentRent} €/kk on ${deltaPercent} % alle alueen keskitason.
 
 2. Vertailukohteet
-Seuraavat vastaavat asunnot ovat tarjolla tai äskettäin vuokrattu alueella:
-${property.comparables.slice(0, 4).map((c) => `   - ${c.address} (${c.type}, ${c.size} m²): ${c.rent} €/kk (${c.source}, ${c.listedDate})`).join('\n')}
+${property.comparables.slice(0, 4).map((c) => `   - ${c.address} (${c.type}, ${c.size} m²): ${c.rent} €/kk (${c.source})`).join('\n')}
 
 3. Kohtuullisuus
-Korotuksen jälkeenkin vuokra ${newRent} €/kk jää alle alueen markkinahinnan (${property.marketEstimate} €/kk). Korotus vastaa ${increasePercent} % nykyisestä vuokrasta.
+Korotuksen jälkeenkin vuokra ${newRent} €/kk jää alle markkinahinnan (${property.marketEstimate} €/kk). Korotus on ${increasePercent} %.
 
 LAKIPERUSTE
 
-Vuokrankorotus perustuu asuinhuoneiston vuokrauksesta annetun lain (481/1995) 27 §:ään. Vuokranantajalla on oikeus korottaa vuokraa ilmoittamalla siitä kirjallisesti vuokralaiselle. Korotus astuu voimaan aikaisintaan kahden kuukauden kuluttua ilmoituksesta.
-
-Vuokrankorotus on kohtuullinen asuinhuoneiston vuokrauksesta annetun lain 30 §:n tarkoittamalla tavalla, ottaen huomioon vuokran suhde alueen vastaavien huoneistojen vuokratasoon.
-
-Mikäli haluatte keskustella korotuksesta tai teillä on kysyttävää, ottakaa yhteyttä allekirjoittaneeseen.
+Laki asuinhuoneiston vuokrauksesta (481/1995) 27 § ja 30 §.
 
 Ystävällisin terveisin,
 
 ___________________________
-[Vuokranantajan nimi]
-[Puhelinnumero]
-[Sähköpostiosoite]
-
-Tämä ilmoitus on lähetetty asuinhuoneiston vuokrauksesta annetun lain (481/1995) mukaisesti.`;
+[Vuokranantajan nimi]`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(letterText);
@@ -112,48 +103,53 @@ Tämä ilmoitus on lähetetty asuinhuoneiston vuokrauksesta annetun lain (481/19
 
   return (
     <motion.div variants={container} initial="hidden" animate="show" exit={{ opacity: 0, y: -10 }}>
-      {/* Header */}
-      <motion.div variants={item} className="mb-4">
-        <div className="flex items-center gap-2 mb-1">
-          <Sparkles className="w-5 h-5 text-[#2563eb]" />
-          <span className="text-sm font-medium text-[#2563eb]">AI-generoitu</span>
+      {/* Back + Header */}
+      <motion.div variants={item} className="flex items-center gap-3 mb-5">
+        <button
+          onClick={onBack}
+          className="p-2 rounded-xl glass transition-all duration-300 hover:bg-white/[0.08]"
+        >
+          <ArrowLeft className="w-5 h-5 text-slate-400" />
+        </button>
+        <div>
+          <div className="flex items-center gap-2 mb-0.5">
+            <Sparkles className="w-4 h-4 text-green-400" />
+            <span className="text-xs font-medium text-green-400">AI-generoitu</span>
+          </div>
+          <h1 className="text-lg font-bold text-slate-100">Vuokrankorotuskirje</h1>
         </div>
-        <h1 className="text-2xl font-bold text-gray-900">Vuokrankorotuskirje</h1>
-        <p className="text-sm text-gray-500 mt-1">
-          Laadittu markkinadatan perusteella · {property.address}
-        </p>
       </motion.div>
 
       {/* Summary Card */}
-      <motion.div variants={item} className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 mb-4">
-        <div className="grid grid-cols-3 gap-4 text-center">
+      <motion.div variants={item} className="glass-green rounded-2xl p-5 mb-4 shadow-lg shadow-black/20">
+        <div className="grid grid-cols-3 gap-3 text-center">
           <div>
-            <p className="text-xs text-blue-400">Nykyinen</p>
-            <p className="text-lg font-bold text-gray-900">{property.currentRent} €</p>
+            <p className="text-[10px] uppercase tracking-wider text-slate-500">Nykyinen</p>
+            <p className="text-lg font-bold text-slate-200">{property.currentRent} €</p>
           </div>
           <div>
-            <p className="text-xs text-blue-400">Ehdotettu</p>
-            <p className="text-lg font-bold text-[#2563eb]">{newRent} €</p>
+            <p className="text-[10px] uppercase tracking-wider text-slate-500">Ehdotettu</p>
+            <p className="text-lg font-bold text-green-400">{newRent} €</p>
           </div>
           <div>
-            <p className="text-xs text-blue-400">Korotus</p>
-            <p className="text-lg font-bold text-emerald-600">+{increaseAmount} €</p>
-            <p className="text-xs text-emerald-500">+{increasePercent}%</p>
+            <p className="text-[10px] uppercase tracking-wider text-slate-500">Korotus</p>
+            <p className="text-lg font-bold text-green-400">+{increaseAmount} €</p>
+            <p className="text-[10px] text-green-400/60">+{increasePercent}%</p>
           </div>
         </div>
       </motion.div>
 
       {/* Letter Content */}
-      <motion.div variants={item} className="bg-white rounded-xl border border-[#e2e8f0] mb-4 overflow-hidden">
-        <div className="flex items-center justify-between px-5 py-3 bg-gray-50 border-b border-[#e2e8f0]">
+      <motion.div variants={item} className="glass rounded-2xl mb-4 overflow-hidden shadow-lg shadow-black/20">
+        <div className="flex items-center justify-between px-5 py-3 border-b border-white/5">
           <div className="flex items-center gap-2">
-            <FileText className="w-4 h-4 text-gray-400" />
-            <span className="text-sm font-medium text-gray-600">Vuokrankorotusilmoitus</span>
+            <FileText className="w-3.5 h-3.5 text-slate-500" />
+            <span className="text-xs font-medium text-slate-400">Vuokrankorotusilmoitus</span>
           </div>
-          <span className="text-xs text-gray-400">Suomi · Laki 481/1995</span>
+          <span className="text-[10px] text-slate-600">Laki 481/1995</span>
         </div>
-        <div className="p-5 sm:p-8">
-          <pre className="text-sm text-gray-800 whitespace-pre-wrap font-[inherit] leading-relaxed">
+        <div className="p-5">
+          <pre className="text-xs text-slate-300 whitespace-pre-wrap font-[inherit] leading-relaxed">
             {letterText}
           </pre>
         </div>
@@ -163,35 +159,33 @@ Tämä ilmoitus on lähetetty asuinhuoneiston vuokrauksesta annetun lain (481/19
       <motion.div variants={item} className="flex gap-3">
         <button
           onClick={handleCopy}
-          className="flex-1 bg-white border border-[#e2e8f0] rounded-xl p-3.5 flex items-center justify-center gap-2 hover:border-blue-300 hover:bg-blue-50 transition-all text-sm font-medium text-gray-700"
+          className="flex-1 glass rounded-2xl p-3.5 flex items-center justify-center gap-2 text-sm font-medium text-slate-300 transition-all duration-300 hover:bg-white/[0.08]"
         >
           {copied ? (
             <>
-              <Check className="w-4 h-4 text-green-500" />
-              <span className="text-green-600">Kopioitu!</span>
+              <Check className="w-4 h-4 text-green-400" />
+              <span className="text-green-400">Kopioitu!</span>
             </>
           ) : (
             <>
               <Copy className="w-4 h-4" />
-              <span>Kopioi teksti</span>
+              <span>Kopioi</span>
             </>
           )}
         </button>
         <button
           onClick={handleDownload}
-          className="flex-1 bg-[#2563eb] text-white rounded-xl p-3.5 flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors text-sm font-medium"
+          className="flex-1 bg-green-500 text-black rounded-2xl p-3.5 flex items-center justify-center gap-2 text-sm font-semibold hover:bg-green-400 transition-all duration-300 shadow-lg shadow-green-500/20"
         >
           <Download className="w-4 h-4" />
-          <span>Lataa tiedostona</span>
+          <span>Lataa</span>
         </button>
       </motion.div>
 
       {/* Disclaimer */}
       <motion.div variants={item} className="mt-4 text-center">
-        <p className="text-xs text-gray-400 leading-relaxed">
-          ⚠️ Tämä kirje on tekoälyn luoma malli. Tarkista tiedot ja muokkaa tarvittaessa ennen lähettämistä.
-          <br />
-          Suosittelemme konsultoimaan lakimiestä ennen vuokrankorotuksen toteuttamista.
+        <p className="text-[10px] text-slate-600 leading-relaxed">
+          ⚠️ AI-luoma malli. Tarkista tiedot ennen lähettämistä.
         </p>
       </motion.div>
     </motion.div>

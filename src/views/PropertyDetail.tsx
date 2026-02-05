@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
+  LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
+  CartesianGrid,
 } from 'recharts';
-import { TrendingDown, MapPin, FileText, ExternalLink, Calendar, User, Receipt, Sparkles, Euro, CheckCircle, Clock } from 'lucide-react';
+import { ArrowLeft, MapPin, FileText, ExternalLink, Calendar, User, Receipt, Euro, CheckCircle, Clock } from 'lucide-react';
 import type { Property } from '../data/mockData';
 import { leases, expenses } from '../data/mockData';
 
@@ -28,7 +29,7 @@ interface PropertyDetailProps {
 
 type Tab = 'market' | 'sopimus' | 'kulut';
 
-export function PropertyDetail({ property, onGenerateLetter }: PropertyDetailProps) {
+export function PropertyDetail({ property, onGenerateLetter, onBack }: PropertyDetailProps) {
   const [activeTab, setActiveTab] = useState<Tab>('market');
   
   const delta = property.marketEstimate - property.currentRent;
@@ -40,63 +41,56 @@ export function PropertyDetail({ property, onGenerateLetter }: PropertyDetailPro
 
   return (
     <motion.div variants={container} initial="hidden" animate="show" exit={{ opacity: 0, y: -10 }}>
-      {/* Property Header Card */}
-      <motion.div variants={item} className="bg-white rounded-xl border border-[#e2e8f0] p-5 mb-4">
-        <div className="flex items-start justify-between mb-4">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="bg-blue-100 text-[#2563eb] text-xs font-bold px-2.5 py-1 rounded-lg">
-                {property.neighborhood}
-              </span>
-              <span className="text-sm text-gray-400">{property.type} · {property.size}m²</span>
-            </div>
-            <h1 className="text-xl font-bold text-gray-900">{property.address}</h1>
-          </div>
-        </div>
-
-        {/* Rent Comparison */}
-        <div className="grid grid-cols-3 gap-3 mb-4">
-          <div className="bg-gray-50 rounded-lg p-3 text-center">
-            <p className="text-xs text-gray-400 mb-1">Nykyinen vuokra</p>
-            <p className="text-2xl font-bold text-gray-900">{property.currentRent} €</p>
-            <p className="text-xs text-gray-400">/kk</p>
-          </div>
-          <div className="bg-blue-50 rounded-lg p-3 text-center">
-            <p className="text-xs text-blue-400 mb-1">Markkina-arvio</p>
-            <p className="text-2xl font-bold text-[#2563eb]">{property.marketEstimate} €</p>
-            <p className="text-xs text-blue-400">/kk</p>
-          </div>
-          <div className="bg-red-50 rounded-lg p-3 text-center">
-            <p className="text-xs text-red-400 mb-1">Erotus</p>
-            <p className="text-2xl font-bold text-red-600">-{delta} €</p>
-            <p className="text-xs text-red-400">-{deltaPercent}%</p>
-          </div>
-        </div>
-
-        {/* Tenant & Lease Info */}
-        <div className="flex flex-wrap gap-4 text-sm text-gray-500">
-          <div className="flex items-center gap-1.5">
-            <User className="w-4 h-4" />
-            <span>{property.tenantName}</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Calendar className="w-4 h-4" />
-            <span>Toistaiseksi voimassa</span>
-          </div>
-          {lease && (
-            <div className="flex items-center gap-1.5">
-              <FileText className="w-4 h-4" />
-              <span>Max korotus {lease.maxAnnualIncrease} %/v</span>
-            </div>
-          )}
+      {/* Back + Title */}
+      <motion.div variants={item} className="flex items-center gap-3 mb-5">
+        <button
+          onClick={onBack}
+          className="p-2 rounded-xl glass transition-all duration-300 hover:bg-white/[0.08]"
+        >
+          <ArrowLeft className="w-5 h-5 text-slate-400" />
+        </button>
+        <div>
+          <h1 className="text-lg font-bold text-slate-100">{property.address}</h1>
+          <p className="text-xs text-slate-500">{property.neighborhood} · {property.type} · {property.size}m²</p>
         </div>
       </motion.div>
 
+      {/* Photo Placeholder */}
+      <motion.div variants={item} className="rounded-2xl h-40 mb-4 bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-white/5 flex items-center justify-center shadow-lg shadow-black/20">
+        <span className="text-4xl">🏠</span>
+      </motion.div>
+
+      {/* Key Stats Row */}
+      <motion.div variants={item} className="grid grid-cols-3 gap-3 mb-5">
+        <div className="glass rounded-2xl p-3 text-center shadow-lg shadow-black/20">
+          <p className="text-[10px] uppercase tracking-wider text-slate-500 mb-1">Vuokra</p>
+          <p className="text-xl font-bold text-green-400">{property.currentRent} €</p>
+          <p className="text-[10px] text-slate-500">/kk</p>
+        </div>
+        <div className="glass-blue rounded-2xl p-3 text-center shadow-lg shadow-black/20">
+          <p className="text-[10px] uppercase tracking-wider text-slate-500 mb-1">Markkina</p>
+          <p className="text-xl font-bold text-blue-400">{property.marketEstimate} €</p>
+          <p className="text-[10px] text-slate-500">/kk</p>
+        </div>
+        <div className="glass-green rounded-2xl p-3 text-center shadow-lg shadow-black/20">
+          <p className="text-[10px] uppercase tracking-wider text-slate-500 mb-1">Erotus</p>
+          <p className="text-xl font-bold text-green-400">+{delta} €</p>
+          <p className="text-[10px] text-green-400/60">+{deltaPercent}%</p>
+        </div>
+      </motion.div>
+
+      {/* Tenant Info */}
+      <motion.div variants={item} className="flex flex-wrap gap-3 text-xs text-slate-500 mb-5">
+        <span className="flex items-center gap-1"><User className="w-3.5 h-3.5" />{property.tenantName}</span>
+        <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" />Toistaiseksi</span>
+        {lease && <span className="flex items-center gap-1"><FileText className="w-3.5 h-3.5" />Max {lease.maxAnnualIncrease}%/v</span>}
+      </motion.div>
+
       {/* Tabs */}
-      <motion.div variants={item} className="flex gap-1 mb-4 bg-white rounded-xl border border-[#e2e8f0] p-1">
-        <TabButton active={activeTab === 'market'} onClick={() => setActiveTab('market')} label="Markkina" icon={<TrendingDown className="w-4 h-4" />} />
-        <TabButton active={activeTab === 'sopimus'} onClick={() => setActiveTab('sopimus')} label="Sopimus" icon={<FileText className="w-4 h-4" />} />
-        <TabButton active={activeTab === 'kulut'} onClick={() => setActiveTab('kulut')} label="Kulut" icon={<Receipt className="w-4 h-4" />} badge={propertyExpenses.length} />
+      <motion.div variants={item} className="glass rounded-2xl p-1 flex gap-1 mb-5 shadow-lg shadow-black/20">
+        <TabButton active={activeTab === 'market'} onClick={() => setActiveTab('market')} label="Markkina" />
+        <TabButton active={activeTab === 'sopimus'} onClick={() => setActiveTab('sopimus')} label="Sopimus" />
+        <TabButton active={activeTab === 'kulut'} onClick={() => setActiveTab('kulut')} label="Kulut" badge={propertyExpenses.length} />
       </motion.div>
 
       {/* Tab Content */}
@@ -113,19 +107,18 @@ export function PropertyDetail({ property, onGenerateLetter }: PropertyDetailPro
   );
 }
 
-function TabButton({ active, onClick, label, icon, badge }: { active: boolean; onClick: () => void; label: string; icon: React.ReactNode; badge?: number }) {
+function TabButton({ active, onClick, label, badge }: { active: boolean; onClick: () => void; label: string; badge?: number }) {
   return (
     <button
       onClick={onClick}
-      className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-all relative ${
-        active ? 'bg-[#2563eb] text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+      className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
+        active ? 'bg-green-400/15 text-green-400' : 'text-slate-500 hover:text-slate-300'
       }`}
     >
-      {icon}
       <span>{label}</span>
       {badge !== undefined && badge > 0 && (
         <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
-          active ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-600'
+          active ? 'bg-green-400/20 text-green-400' : 'bg-white/10 text-slate-500'
         }`}>
           {badge}
         </span>
@@ -134,6 +127,23 @@ function TabButton({ active, onClick, label, icon, badge }: { active: boolean; o
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const DarkTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="glass rounded-xl p-3 shadow-lg shadow-black/30">
+        <p className="text-xs text-slate-400 mb-1">{label}</p>
+        {payload.map((p: { dataKey: string; value: number; color: string }, i: number) => (
+          <p key={i} className="text-sm font-semibold" style={{ color: p.color }}>
+            {p.dataKey === 'yourRent' ? 'Vuokra' : 'Markkina'}: {p.value} €
+          </p>
+        ))}
+      </div>
+    );
+  }
+  return null;
+};
+
 function MarketTab({ property, delta, onGenerateLetter }: { property: Property; delta: number; deltaPercent?: string; onGenerateLetter: () => void }) {
   const avgComparable = Math.round(
     property.comparables.reduce((s, c) => s + c.rent, 0) / property.comparables.length
@@ -141,64 +151,32 @@ function MarketTab({ property, delta, onGenerateLetter }: { property: Property; 
 
   return (
     <>
-      {/* Delta Banner */}
-      <motion.div variants={item} initial="hidden" animate="show" className="bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 rounded-xl p-4 mb-4 flex items-center gap-3">
-        <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center shrink-0">
-          <TrendingDown className="w-5 h-5 text-red-600" />
-        </div>
-        <div>
-          <p className="font-semibold text-red-900 text-sm">
-            Vuokrasi on {delta} €/kk alle markkinahinnan
-          </p>
-          <p className="text-red-700 text-xs mt-0.5">
-            Menetät vuodessa arviolta {delta * 12} € potentiaalista vuokratuloa
-          </p>
-        </div>
-      </motion.div>
-
-      {/* Market Chart */}
-      <motion.div variants={item} initial="hidden" animate="show" className="bg-white rounded-xl border border-[#e2e8f0] p-5 mb-4">
-        <h2 className="text-lg font-semibold text-gray-900 mb-1">Markkinavertailu</h2>
-        <p className="text-sm text-gray-400 mb-4">Vuokrasi vs. alueen markkinahinta (12 kk)</p>
-        <div className="h-64 sm:h-72">
+      {/* Chart */}
+      <motion.div variants={item} initial="hidden" animate="show" className="glass rounded-2xl p-5 mb-4 shadow-lg shadow-black/20">
+        <h2 className="text-sm font-semibold text-slate-100 mb-1">Markkinavertailu</h2>
+        <p className="text-xs text-slate-500 mb-4">Vuokrasi vs. markkinahinta (12 kk)</p>
+        <div className="h-56">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={property.monthlyData} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+            <LineChart data={property.monthlyData} margin={{ top: 5, right: 5, left: -15, bottom: 5 }}>
+              <CartesianGrid stroke="rgba(255,255,255,0.05)" strokeDasharray="3 3" />
               <XAxis
                 dataKey="month"
-                tick={{ fontSize: 11, fill: '#94a3b8' }}
-                axisLine={{ stroke: '#e2e8f0' }}
+                tick={{ fontSize: 10, fill: '#64748b' }}
+                axisLine={{ stroke: 'rgba(255,255,255,0.05)' }}
                 tickLine={false}
               />
               <YAxis
-                tick={{ fontSize: 11, fill: '#94a3b8' }}
+                tick={{ fontSize: 10, fill: '#64748b' }}
                 axisLine={false}
                 tickLine={false}
                 tickFormatter={(v) => `${v}€`}
                 domain={['auto', 'auto']}
               />
-              <Tooltip
-                contentStyle={{
-                  borderRadius: '12px',
-                  border: '1px solid #e2e8f0',
-                  boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
-                  fontSize: '13px',
-                }}
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                formatter={(value: any, name: any) => [
-                  `${value} €/kk`,
-                  name === 'yourRent' ? 'Sinun vuokra' : 'Markkinahinta',
-                ]}
-              />
-              <Legend
-                formatter={(value: string) =>
-                  value === 'yourRent' ? 'Sinun vuokra' : 'Markkinahinta'
-                }
-              />
+              <Tooltip content={<DarkTooltip />} />
               <Line
                 type="monotone"
                 dataKey="yourRent"
-                stroke="#94a3b8"
+                stroke="#64748b"
                 strokeWidth={2}
                 strokeDasharray="6 4"
                 dot={false}
@@ -206,58 +184,61 @@ function MarketTab({ property, delta, onGenerateLetter }: { property: Property; 
               <Line
                 type="monotone"
                 dataKey="marketAvg"
-                stroke="#2563eb"
-                strokeWidth={3}
+                stroke="#4ade80"
+                strokeWidth={2.5}
                 dot={false}
-                activeDot={{ r: 5, fill: '#2563eb' }}
+                activeDot={{ r: 4, fill: '#4ade80', stroke: '#0f1115', strokeWidth: 2 }}
               />
             </LineChart>
           </ResponsiveContainer>
         </div>
+        <div className="flex items-center gap-4 mt-3 text-xs text-slate-500">
+          <span className="flex items-center gap-1.5"><span className="w-3 h-0.5 bg-slate-500 rounded inline-block" style={{ borderTop: '2px dashed #64748b' }}></span> Vuokra</span>
+          <span className="flex items-center gap-1.5"><span className="w-3 h-0.5 bg-green-400 rounded inline-block"></span> Markkina</span>
+        </div>
       </motion.div>
 
-      {/* Comparable Listings */}
-      <motion.div variants={item} initial="hidden" animate="show" className="bg-white rounded-xl border border-[#e2e8f0] p-5 mb-4">
+      {/* Comparables */}
+      <motion.div variants={item} initial="hidden" animate="show" className="glass rounded-2xl p-5 mb-4 shadow-lg shadow-black/20">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">Vertailukohteet</h2>
-            <p className="text-sm text-gray-400">
-              Keskihinta: <span className="font-semibold text-[#2563eb]">{avgComparable} €/kk</span>
+            <h2 className="text-sm font-semibold text-slate-100">Vertailukohteet</h2>
+            <p className="text-xs text-slate-500">
+              Keskihinta: <span className="font-semibold text-green-400">{avgComparable} €/kk</span>
             </p>
           </div>
-          <span className="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded-lg">
+          <span className="text-[10px] bg-white/5 text-slate-500 px-2 py-1 rounded-lg border border-white/5">
             {property.comparables.length} kohdetta
           </span>
         </div>
-        <div className="space-y-3">
+        <div className="space-y-2">
           {property.comparables.map((comp) => {
             const compDelta = comp.rent - property.currentRent;
-            const compDeltaPercent = ((compDelta / property.currentRent) * 100).toFixed(1);
             return (
               <div
                 key={comp.id}
-                className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100"
+                className="flex items-center gap-3 p-3 rounded-xl transition-all duration-300 hover:bg-white/[0.05]"
               >
-                <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center shrink-0">
-                  <MapPin className="w-4 h-4 text-gray-400" />
+                <div className="w-9 h-9 rounded-lg bg-white/5 border border-white/5 flex items-center justify-center shrink-0">
+                  <MapPin className="w-4 h-4 text-slate-500" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">{comp.address}</p>
-                  <div className="flex items-center gap-2 text-xs text-gray-400 mt-0.5">
+                  <p className="text-sm font-medium text-slate-200 truncate">{comp.address}</p>
+                  <div className="flex items-center gap-1.5 text-[10px] text-slate-500 mt-0.5">
                     <span>{comp.type} · {comp.size}m²</span>
                     <span>·</span>
                     <span>{comp.distance}</span>
                     <span>·</span>
                     <span className="flex items-center gap-0.5">
-                      <ExternalLink className="w-3 h-3" />
+                      <ExternalLink className="w-2.5 h-2.5" />
                       {comp.source}
                     </span>
                   </div>
                 </div>
                 <div className="text-right shrink-0">
-                  <p className="text-sm font-bold text-gray-900">{comp.rent} €/kk</p>
-                  <p className={`text-xs font-medium ${compDelta > 0 ? 'text-red-500' : 'text-green-500'}`}>
-                    {compDelta > 0 ? '+' : ''}{compDelta} € ({compDeltaPercent}%)
+                  <p className="text-sm font-bold text-slate-100">{comp.rent} €</p>
+                  <p className="text-[10px] font-medium text-green-400">
+                    +{compDelta} €
                   </p>
                 </div>
               </div>
@@ -266,17 +247,27 @@ function MarketTab({ property, delta, onGenerateLetter }: { property: Property; 
         </div>
       </motion.div>
 
+      {/* Delta Banner */}
+      <motion.div variants={item} initial="hidden" animate="show" className="glass-green rounded-2xl p-4 mb-4 shadow-lg shadow-black/20">
+        <p className="font-semibold text-green-400 text-sm">
+          Potentiaali: +{delta} €/kk
+        </p>
+        <p className="text-xs text-slate-400 mt-1">
+          Vuositasolla +{(delta * 12).toLocaleString('fi-FI')} € lisää vuokratuloa
+        </p>
+      </motion.div>
+
       {/* Generate Letter CTA */}
       <motion.div variants={item} initial="hidden" animate="show">
         <button
           onClick={onGenerateLetter}
-          className="w-full bg-gradient-to-r from-[#2563eb] to-blue-600 text-white rounded-xl p-4 flex items-center justify-center gap-3 hover:shadow-lg hover:shadow-blue-200 transition-all active:scale-[0.99]"
+          className="w-full bg-green-500 text-black rounded-2xl p-4 flex items-center justify-center gap-2 font-semibold text-sm hover:bg-green-400 transition-all duration-300 active:scale-[0.98] shadow-lg shadow-green-500/20"
         >
           <FileText className="w-5 h-5" />
-          <span className="font-semibold">Luo vuokrankorotuskirje</span>
+          <span>Luo vuokrankorotuskirje</span>
         </button>
-        <p className="text-center text-xs text-gray-400 mt-2">
-          Tekoäly laatii vuokrankorotusilmoituksen markkinadataan perustuen
+        <p className="text-center text-[10px] text-slate-600 mt-2">
+          AI laatii korotusilmoituksen markkinadataan perustuen
         </p>
       </motion.div>
     </>
@@ -299,69 +290,71 @@ function LeaseTab({ lease }: { lease: typeof leases[0] }) {
 
   return (
     <>
-      <motion.div variants={item} initial="hidden" animate="show" className="bg-white rounded-xl border border-[#e2e8f0] p-5 mb-4">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Sopimustiedot</h2>
+      <motion.div variants={item} initial="hidden" animate="show" className="glass rounded-2xl p-5 mb-4 shadow-lg shadow-black/20">
+        <h2 className="text-sm font-semibold text-slate-100 mb-4">Sopimustiedot</h2>
         <div className="space-y-3">
           <InfoRow label="Vuokralainen" value={lease.tenantName} />
-          <InfoRow label="Sopimuksen tyyppi" value="Toistaiseksi voimassa oleva" />
+          <InfoRow label="Tyyppi" value="Toistaiseksi voimassa" />
           <InfoRow label="Alkamispäivä" value={formatDate(lease.leaseStart)} />
           <InfoRow label="Vuokra" value={`${lease.rentAmount} €/kk`} />
-          <InfoRow label="Korotuslauseke" value={`Max ${lease.maxAnnualIncrease} % vuodessa`} />
-          <InfoRow label="Vakuus" value={`${lease.rentAmount * 2} € (2 kk vuokraa)`} />
+          <InfoRow label="Korotuslauseke" value={`Max ${lease.maxAnnualIncrease} %/v`} />
+          <InfoRow label="Vakuus" value={`${lease.rentAmount * 2} € (2 kk)`} />
         </div>
       </motion.div>
 
       {/* Rent Increase History */}
-      <motion.div variants={item} initial="hidden" animate="show" className="bg-white rounded-xl border border-[#e2e8f0] p-5 mb-4">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Vuokrankorotukset</h2>
+      <motion.div variants={item} initial="hidden" animate="show" className="glass rounded-2xl p-5 mb-4 shadow-lg shadow-black/20">
+        <h2 className="text-sm font-semibold text-slate-100 mb-4">Vuokrankorotukset</h2>
         
         {lease.lastIncreaseDate && (
-          <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg mb-3">
-            <CheckCircle className="w-5 h-5 text-green-500 shrink-0" />
+          <div className="flex items-center gap-3 p-3 bg-green-400/10 rounded-xl mb-3 border border-green-400/10">
+            <CheckCircle className="w-4 h-4 text-green-400 shrink-0" />
             <div>
-              <p className="text-sm font-medium text-green-800">
-                Edellinen korotus: +{lease.lastIncreasePercent} %
+              <p className="text-sm font-medium text-green-400">
+                Edellinen: +{lease.lastIncreasePercent} %
               </p>
-              <p className="text-xs text-green-600">
+              <p className="text-xs text-slate-500">
                 Voimaan {formatDate(lease.lastIncreaseDate)}
               </p>
             </div>
           </div>
         )}
 
-        <div className={`flex items-center gap-3 p-3 rounded-lg ${
-          notifyDays <= 14 ? 'bg-amber-50 border border-amber-200' : 'bg-blue-50'
+        <div className={`flex items-center gap-3 p-3 rounded-xl border ${
+          notifyDays <= 14
+            ? 'bg-amber-400/10 border-amber-400/15'
+            : 'bg-blue-400/10 border-blue-400/10'
         }`}>
-          <Clock className={`w-5 h-5 shrink-0 ${notifyDays <= 14 ? 'text-amber-500' : 'text-blue-500'}`} />
+          <Clock className={`w-4 h-4 shrink-0 ${notifyDays <= 14 ? 'text-amber-400' : 'text-blue-400'}`} />
           <div>
-            <p className={`text-sm font-medium ${notifyDays <= 14 ? 'text-amber-800' : 'text-blue-800'}`}>
-              Seuraava korotus mahdollinen {formatDate(lease.nextIncreaseEligible)}
+            <p className={`text-sm font-medium ${notifyDays <= 14 ? 'text-amber-400' : 'text-blue-400'}`}>
+              Korotus mahdollinen {formatDate(lease.nextIncreaseEligible)}
             </p>
-            <p className={`text-xs ${notifyDays <= 14 ? 'text-amber-600' : 'text-blue-600'}`}>
-              Ilmoitettava viimeistään {formatDate(lease.notifyByDate)}
+            <p className="text-xs text-slate-500">
+              Ilmoitus viim. {formatDate(lease.notifyByDate)}
               {notifyDays > 0 ? ` (${notifyDays} pv)` : ' (myöhässä!)'}
             </p>
           </div>
         </div>
       </motion.div>
 
-      {/* Signature Status */}
-      <motion.div variants={item} initial="hidden" animate="show" className="bg-white rounded-xl border border-[#e2e8f0] p-5">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Allekirjoitukset</h2>
-        <div className="space-y-3">
-          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-green-500" />
-              <span className="text-sm font-medium text-gray-900">Vuokranantaja</span>
-            </div>
-            <span className="text-sm text-green-600 font-medium">Allekirjoitettu ✅</span>
+      {/* Signatures */}
+      <motion.div variants={item} initial="hidden" animate="show" className="glass rounded-2xl p-5 shadow-lg shadow-black/20">
+        <h2 className="text-sm font-semibold text-slate-100 mb-4">Allekirjoitukset</h2>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.03]">
+            <span className="text-sm text-slate-300 flex items-center gap-2">
+              <CheckCircle className="w-4 h-4 text-green-400" />
+              Vuokranantaja
+            </span>
+            <span className="text-xs text-green-400 font-medium">Allekirjoitettu ✅</span>
           </div>
-          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-green-500" />
-              <span className="text-sm font-medium text-gray-900">Vuokralainen</span>
-            </div>
-            <span className="text-sm text-green-600 font-medium">Allekirjoitettu ✅</span>
+          <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.03]">
+            <span className="text-sm text-slate-300 flex items-center gap-2">
+              <CheckCircle className="w-4 h-4 text-green-400" />
+              Vuokralainen
+            </span>
+            <span className="text-xs text-green-400 font-medium">Allekirjoitettu ✅</span>
           </div>
         </div>
       </motion.div>
@@ -385,65 +378,59 @@ function ExpensesTab({ expenses: propertyExpenses, totalExpenses }: { expenses: 
   };
 
   const categoryColors: Record<string, string> = {
-    korjaus: 'bg-red-50 text-red-700',
-    huolto: 'bg-orange-50 text-orange-700',
-    vakuutus: 'bg-blue-50 text-blue-700',
-    vastike: 'bg-purple-50 text-purple-700',
-    tarvikkeet: 'bg-emerald-50 text-emerald-700',
-    muu: 'bg-gray-50 text-gray-700',
+    korjaus: 'bg-red-400/15 text-red-400',
+    huolto: 'bg-amber-400/15 text-amber-400',
+    vakuutus: 'bg-blue-400/15 text-blue-400',
+    vastike: 'bg-purple-400/15 text-purple-400',
+    tarvikkeet: 'bg-green-400/15 text-green-400',
+    muu: 'bg-white/10 text-slate-400',
   };
 
   return (
     <>
       {/* Total */}
-      <motion.div variants={item} initial="hidden" animate="show" className="bg-white rounded-xl border border-[#e2e8f0] p-4 mb-4 flex items-center justify-between">
+      <motion.div variants={item} initial="hidden" animate="show" className="glass rounded-2xl p-4 mb-4 flex items-center justify-between shadow-lg shadow-black/20">
         <div className="flex items-center gap-2">
-          <Euro className="w-5 h-5 text-gray-400" />
-          <span className="text-sm font-medium text-gray-700">Kulut yhteensä</span>
+          <Euro className="w-4 h-4 text-slate-500" />
+          <span className="text-sm text-slate-400">Kulut yhteensä</span>
         </div>
-        <span className="text-xl font-bold text-gray-900">{totalExpenses.toLocaleString('fi-FI')} €</span>
+        <span className="text-xl font-bold text-red-400">{totalExpenses.toLocaleString('fi-FI')} €</span>
       </motion.div>
 
       {/* Expense List */}
-      <div className="space-y-3">
+      <div className="space-y-2">
         {propertyExpenses.map((expense) => (
           <motion.div
             key={expense.id}
             variants={item}
             initial="hidden"
             animate="show"
-            className="bg-white rounded-xl border border-[#e2e8f0] p-4"
+            className="glass rounded-2xl p-4 shadow-lg shadow-black/20"
           >
             <div className="flex items-start gap-3">
-              <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center shrink-0">
-                <Receipt className="w-5 h-5 text-gray-400" />
+              <div className="w-9 h-9 rounded-lg bg-white/5 border border-white/5 flex items-center justify-center shrink-0">
+                <Receipt className="w-4 h-4 text-slate-500" />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
                   <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${categoryColors[expense.category]}`}>
                     {categoryLabels[expense.category]}
                   </span>
-                  <span className="text-xs text-gray-400">{formatDate(expense.date)}</span>
+                  <span className="text-[10px] text-slate-600">{formatDate(expense.date)}</span>
                 </div>
-                <h3 className="font-semibold text-gray-900 text-sm">{expense.vendor}</h3>
-                <p className="text-sm text-gray-600 mt-0.5">{expense.description}</p>
-                {expense.aiExtracted && (
-                  <div className="mt-2 flex items-start gap-1.5 bg-blue-50 rounded-lg p-2">
-                    <Sparkles className="w-3.5 h-3.5 text-[#2563eb] shrink-0 mt-0.5" />
-                    <span className="text-xs text-blue-800">{expense.aiExtracted}</span>
-                  </div>
-                )}
+                <h3 className="font-semibold text-slate-200 text-sm">{expense.vendor}</h3>
+                <p className="text-xs text-slate-500 mt-0.5">{expense.description}</p>
               </div>
-              <span className="text-lg font-bold text-gray-900 shrink-0">{expense.amount} €</span>
+              <span className="text-base font-bold text-slate-100 shrink-0">{expense.amount} €</span>
             </div>
           </motion.div>
         ))}
       </div>
 
       {propertyExpenses.length === 0 && (
-        <motion.div variants={item} initial="hidden" animate="show" className="bg-white rounded-xl border border-[#e2e8f0] p-8 text-center">
-          <Receipt className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-          <p className="text-sm text-gray-500">Ei kuluja tälle asunnolle</p>
+        <motion.div variants={item} initial="hidden" animate="show" className="glass rounded-2xl p-8 text-center shadow-lg shadow-black/20">
+          <Receipt className="w-8 h-8 text-slate-600 mx-auto mb-2" />
+          <p className="text-sm text-slate-500">Ei kuluja tälle asunnolle</p>
         </motion.div>
       )}
     </>
@@ -452,9 +439,9 @@ function ExpensesTab({ expenses: propertyExpenses, totalExpenses }: { expenses: 
 
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
-      <span className="text-sm text-gray-500">{label}</span>
-      <span className="text-sm font-medium text-gray-900">{value}</span>
+    <div className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
+      <span className="text-sm text-slate-500">{label}</span>
+      <span className="text-sm font-medium text-slate-200">{value}</span>
     </div>
   );
 }
